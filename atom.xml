@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Removel</title>
+  <subtitle>鱼梦的个人博客</subtitle>
+  <link href="https://removel.github.io/" rel="alternate" type="text/html"/>
+  <link href="https://removel.github.io/atom.xml" rel="self" type="application/atom+xml"/>
+  <id>https://removel.github.io/</id>
+  <updated>2026-04-22T08:32:54.207Z</updated>
+  <language>zh_CN</language>
+  <entry>
+    <title>使用Mizuki创建个人博客</title>
+    <link href="https://removel.github.io/Removel.github.io/posts/2026-04-22_mizuki-blog-creation/" rel="alternate" type="text/html"/>
+    <id>https://removel.github.io/Removel.github.io/posts/2026-04-22_mizuki-blog-creation/</id>
+    <published>2026-04-22T00:00:00.000Z</published>
+    <updated>2026-04-22T00:00:00.000Z</updated>
+    <summary>终于创建了自己的个人博客，使用GitHub上开源的Mizuki项目，从此开始记录我的学习与成长历程！</summary>
+    <content type="html"><![CDATA[<h1>使用Mizuki创建个人博客</h1>
+<h2>缘起</h2>
+<p>从很早开始就想要创建一个个人博客，但是网上买服务器挂载等方法似乎太吃经济了，另外也没有很好的架构能直接使用。因为我主要是学习的后端和agent智能体方向，所以前端的内容不太清晰也不会写，agent在不加载对应skill的方法下很难生成长期更新可维护+设置与结构清晰+风格合适的前端项目。</p>
+<h2>寻找解决方案</h2>
+<p>在经历了一番探索后，最后在GitHub找到了<a href="https://github.com/LyraVoid/Mizuki">Mizuki</a>这个优秀的开源博客模板。它完美地满足了我的需求：</p>
+<ul>
+<li><strong>现代化设计</strong>：基于Astro和Tailwind CSS构建，界面精美</li>
+<li><strong>功能丰富</strong>：支持明暗主题、搜索、评论、图片画廊等</li>
+<li><strong>易于配置</strong>：无需复杂的前端知识就能快速搭建</li>
+<li><strong>静态部署</strong>：可以免费部署到GitHub Pages</li>
+</ul>
+<h2>博客定位</h2>
+<blockquote>
+<p>[!NOTE]
+这个博客将主要用于记录我的个人学习经历、技术探索和生活感悟。</p>
+</blockquote>
+<p>从今往后就从这里开始记录我的个人经历啦！（别问我为什么不使用微信朋友圈和qq动态）</p>
+<h2>部署计划</h2>
+<p>准备将该项目构建成dist挂载在GitHub的仓库当中以便直接访问，这样就能：</p>
+<ul>
+<li>免费托管个人博客</li>
+<li>利用GitHub Pages的CDN加速</li>
+<li>方便版本控制和备份</li>
+<li>支持自定义域名</li>
+</ul>
+<h2>展望</h2>
+<p>这是一个全新的开始，我期待在这里记录我的成长轨迹，分享技术心得，也希望能够与更多志同道合的朋友交流学习。</p>
+<p>欢迎来到我的博客！🎉</p>
+]]></content>
+    <author>
+      <name>Removel鱼梦</name>
+    </author>
+    <category term="生活记录"></category>
+  </entry>
+</feed>
