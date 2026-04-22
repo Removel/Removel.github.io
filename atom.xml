@@ -5,12 +5,12 @@
   <link href="https://removel.github.io/" rel="alternate" type="text/html"/>
   <link href="https://removel.github.io/atom.xml" rel="self" type="application/atom+xml"/>
   <id>https://removel.github.io/</id>
-  <updated>2026-04-22T08:51:27.316Z</updated>
+  <updated>2026-04-22T08:53:54.707Z</updated>
   <language>zh_CN</language>
   <entry>
     <title>使用Mizuki创建个人博客</title>
-    <link href="https://removel.github.io/Removel.github.io/posts/2026-04-22_mizuki-blog-creation/" rel="alternate" type="text/html"/>
-    <id>https://removel.github.io/Removel.github.io/posts/2026-04-22_mizuki-blog-creation/</id>
+    <link href="https://removel.github.io/posts/2026-04-22_mizuki-blog-creation/" rel="alternate" type="text/html"/>
+    <id>https://removel.github.io/posts/2026-04-22_mizuki-blog-creation/</id>
     <published>2026-04-22T00:00:00.000Z</published>
     <updated>2026-04-22T00:00:00.000Z</updated>
     <summary>终于创建了自己的个人博客，使用GitHub上开源的Mizuki项目，从此开始记录我的学习与成长历程！</summary>

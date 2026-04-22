@@ -1,1 +1,0 @@
-import"./config.CCCnRNXN.js";import"./zh_TW.CABTBg9K.js";function u(o,e){const n=o.replace(/^\/|\/$/g,"").toLowerCase(),r=e.replace(/^\/|\/$/g,"").toLowerCase();return n===r}function t(...o){return o.join("/").replace(/\/+/g,"/")}function c(o){return t("","/Removel.github.io/",o)}export{u as p,c as u};
