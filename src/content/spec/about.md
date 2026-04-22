@@ -1,49 +1,45 @@
-
-This website is built with the **Astro** framework using the [Mizuki](https://github.com/LyraVoid/Mizuki) theme.
+# About
+这里是我的个人小站，基于 **Astro** 框架与 [Mizuki](https://github.com/LyraVoid/Mizuki) 主题搭建，记录技术、生活与日常思考。
 
 ::github{repo="LyraVoid/Mizuki"}
 
-## 🌟 Theme Features
+## 🌟 关于本站
+### 🎨 设计与体验
+- **简约干净风格** - 专注内容，清爽阅读
+- **全设备适配** - 手机、平板、电脑都能舒适浏览
+- **深色/浅色模式** - 护眼自动切换，动效柔和
+- **舒适排版** - 代码与文字清晰易读
+- **流畅交互** - 页面切换自然，无卡顿感
 
-### 🎨 Design & User Experience
-- **Modern & Elegant Design** - Clean, minimalist interface with beautiful typography
-- **Fully Responsive** - Optimized for all devices from mobile to desktop
-- **Dark/Light Mode** - Automatic theme switching with smooth transitions
-- **Beautiful Typography** - Enhanced readability with JetBrains Mono font
-- **Smooth Animations** - Fluid page transitions and interactive elements
+### 🔍 内容与功能
+- **全站搜索** - 快速找到想看的内容
+- **Markdown 写作** - 支持代码高亮、数学公式
+- **智能目录** - 长文自动导航，阅读更轻松
+- **RSS 订阅** - 不错过任何更新
+- **阅读时长** - 提前知道文章大概阅读时间
+- **分类标签** - 技术、生活、随笔清晰归类
 
-### 🔍 Content & Search
-- **Advanced Search** - Powered by [Pagefind](https://pagefind.app/) for fast, accurate results
-- **Enhanced Markdown** - Extended syntax with code highlighting and math support
-- **Interactive Table of Contents** - Auto-scroll navigation for long articles
-- **RSS Feed Generation** - Stay updated with automatic feed generation
-- **Reading Time Estimation** - Know how long articles take to read
-- **Post Categorization** - Organize content with tags and categories
+### 📱 特色页面
+- **动态/随笔页** - 记录日常碎碎念
+- **友链广场** - 朋友们的网站合集
+- **文章归档** - 按时间查看所有内容
+- **项目展示** - 我的作品与开源项目
+- **关于我** - 你正在看的这一页 😄
 
+### 🛠 技术特性
+- **代码块增强** - 高亮、复制、行号齐全
+- **数学公式支持** - 可写 LaTeX 公式
+- **图片懒加载** - 打开更快更省流量
+- **SEO 友好** - 更容易被搜到
+- **极速加载** - 轻量无冗余
+- **评论支持** - 可留言交流
 
-
-### 📱 Special Pages
-- **Anime Tracking Page** - Track your anime watching progress with ratings
-- **Friends Links Page** - Showcase friend websites with beautiful cards
-- **Diary/Moments Page** - Share life moments like social media posts
-- **Archive Page** - Organized timeline view of all posts
-- **About Page** - Customizable personal introduction (this page!)
-
-### 🛠 Technical Features
-- **Enhanced Code Blocks** - Powered by [Expressive Code](https://expressive-code.com/)
-- **Math Support** - LaTeX rendering with KaTeX for mathematical expressions
-- **Image Optimization** - PhotoSwipe gallery with lazy loading
-- **SEO Optimized** - Built-in sitemap and meta tags for better search visibility
-- **Performance Optimized** - Fast loading with caching and optimization
-- **Comment System Ready** - Integration support for Twikoo comments
-
-### 🎯 Advanced Markdown Features
-- **Callouts & Admonitions** - Beautiful info boxes with `> [!NOTE]`, `> [!TIP]`, `> [!WARNING]`
-- **Mathematical Equations** - Write LaTeX math with `$inline$` and `$$block$$` syntax
-- **GitHub Cards** - Embed repository cards with `::github{repo="user/repo"}`
-- **Syntax Highlighting** - Advanced code highlighting with line numbers
-- **Copy Code Buttons** - Easy code copying functionality
+### 🎯 写作增强
+- **提示卡片** - NOTE / TIP / WARNING 样式
+- **公式支持** - 行内公式与块级公式均可
+- **GitHub 卡片** - 快速展示仓库
+- **代码高亮** - 多语言支持
+- **一键复制** - 代码随手复制使用
 
 ---
-
-*Built with ❤️ using Astro and inspired by modern web design principles.*
+*保持热爱，持续记录，用代码与文字构建自己的小世界 ✨*
