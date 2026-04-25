@@ -22,11 +22,20 @@ const diaryData: DiaryItem[] = [
 	{
 		id: 2,
 		content: "上学期跑的步竟然变成了奖状和奖品（一个书包）！",
-		date: "2026-04-20T00:00:00Z",
+		date: "2026-04-20T08:00:00Z",
 		images: ["/images/diary/chat_picture.jpg"],
 		location: "学校",
 		mood: "开心",
 		tags: ["跑步", "奖状", "奖品", "书包"],
+	},
+	{
+		id: 3,
+		content: "今天又参加了电脑维护活动呀~",
+		date: "2026-04-25T15:00:00Z",
+		images: ["/images/diary/computer-maintenance-activity.jpg"],
+		location: "学校",
+		mood: "充实",
+		tags: ["社团活动", "电脑维护"],
 	},
 ];
 
