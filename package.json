@@ -27,15 +27,15 @@
 		"deploy": "gh-pages -d dist -r https://github.com/Removel/Removel.github.io.git"
 	},
 	"dependencies": {
-		"@astrojs/check": "^0.9.8",
-		"@astrojs/mdx": "^5.0.3",
+		"@astrojs/check": "^0.9.9",
+		"@astrojs/mdx": "^5.0.4",
 		"@astrojs/rss": "^4.0.18",
 		"@astrojs/sitemap": "^3.7.2",
 		"@astrojs/svelte": "8.0.5",
 		"@expressive-code/core": "^0.41.7",
 		"@expressive-code/plugin-collapsible-sections": "^0.41.7",
 		"@expressive-code/plugin-line-numbers": "^0.41.7",
-		"@fancyapps/ui": "^6.1.13",
+		"@fancyapps/ui": "^6.1.14",
 		"@fontsource-variable/jetbrains-mono": "^5.2.8",
 		"@fontsource/roboto": "^5.2.10",
 		"@iconify/svelte": "^5.2.1",
@@ -71,7 +71,7 @@
 		"satori": "^0.26.0",
 		"sharp": "^0.34.5",
 		"stylus": "^0.64.0",
-		"svelte": "^5.55.4",
+		"svelte": "^5.55.5",
 		"tailwindcss": "^4.2.4",
 		"typescript": "^5.9.3",
 		"unist-util-visit": "^5.1.0"
@@ -82,9 +82,9 @@
 		"@iconify-json/fa7-brands": "^1.2.2",
 		"@iconify-json/fa7-regular": "^1.2.3",
 		"@iconify-json/fa7-solid": "^1.2.4",
-		"@iconify-json/material-symbols": "^1.2.68",
+		"@iconify-json/material-symbols": "^1.2.69",
 		"@iconify-json/mdi": "^1.2.3",
-		"@iconify-json/simple-icons": "^1.2.79",
+		"@iconify-json/simple-icons": "^1.2.80",
 		"@rollup/plugin-yaml": "^4.1.2",
 		"@types/hast": "^3.0.4",
 		"@types/markdown-it": "^14.1.2",
@@ -96,7 +96,7 @@
 		"eslint-plugin-astro": "^1.7.0",
 		"eslint-plugin-import": "^2.32.0",
 		"eslint-plugin-simple-import-sort": "^12.1.1",
-		"eslint-plugin-svelte": "^3.17.0",
+		"eslint-plugin-svelte": "^3.17.1",
 		"fontmin": "^1.1.1",
 		"gh-pages": "^6.3.0",
 		"glob": "^13.0.6",
@@ -107,7 +107,7 @@
 		"prettier-plugin-astro": "^0.14.1",
 		"prettier-plugin-svelte": "^3.5.1",
 		"svelte-eslint-parser": "^1.6.0",
-		"typescript-eslint": "^8.59.0"
+		"typescript-eslint": "^8.59.1"
 	},
 	"packageManager": "pnpm@10.33.0"
 }
