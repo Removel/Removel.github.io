@@ -123,6 +123,16 @@ pending_extraction（待提取） --&amp;gt; admitted（采纳） --&amp;gt; buf
 &lt;li&gt;强制封存长时间未更新的缓冲区&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;但是它的方式依旧是把最终生成的任务重新丢到任务队列当中。&lt;/p&gt;
+&lt;hr /&gt;
+&lt;h2&gt;总结&lt;/h2&gt;
+&lt;p&gt;OpenHuman 的记忆系统核心是“可追溯的原始记录 + 可编辑的可视化界面 + 可检索的结构化索引”，并通过 Memory Tree 把海量信息分层压缩、逐步抽象。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;底层用规范化 Markdown 承载原始内容与来源信息，保证透明与可追溯；&lt;/li&gt;
+&lt;li&gt;借助 Obsidian 将记忆以图谱方式呈现，并允许用户直接修订；&lt;/li&gt;
+&lt;li&gt;使用 SQLite 将分块、向量、树结构与元数据组织起来，实现高效检索与溯源；&lt;/li&gt;
+&lt;li&gt;Memory Tree 以 L0→L1→L2… 的“封存/压缩”机制，把新鲜细节逐层汇聚成稳定摘要，同时分别在来源树、主题树、全局树三条轴线上组织信息。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;整体上，它更像一个“分层缓存 + 可解释摘要”的记忆工程：既能持续摄入新信息，又能在不丢失溯源的前提下保持可用性与可扩展性。&lt;/p&gt;
 </content:encoded></item><item><title>从路由器选型到远程追番（一）：路由器选取与系统刷取</title><link>https://removel.github.io/posts/26-05-11/2026-05-11_router-openwrt-guide/</link><guid isPermaLink="true">https://removel.github.io/posts/26-05-11/2026-05-11_router-openwrt-guide/</guid><description>以小米 AX3000T 为例，记录从路由器选型到刷入 OpenWrt 的完整过程：为什么要折腾、怎么避免变砖、TTL 串口 + U-Boot + TFTP 的关键步骤与坑点。</description><pubDate>Mon, 11 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;从路由器选型到远程追番（一）：路由器选取与系统刷取&lt;/h1&gt;
 &lt;p&gt;——计算机网络是一个由无数计算机人搭起的喜马拉雅，我们有幸站在这样的山巅、站在巨人的肩膀上，继续构思、创造的循环。&lt;/p&gt;
 &lt;h2&gt;0、阅读指引（先看这个）&lt;/h2&gt;

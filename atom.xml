@@ -5,7 +5,7 @@
   <link href="https://removel.github.io/" rel="alternate" type="text/html"/>
   <link href="https://removel.github.io/atom.xml" rel="self" type="application/atom+xml"/>
   <id>https://removel.github.io/</id>
-  <updated>2026-05-20T01:37:33.896Z</updated>
+  <updated>2026-05-20T09:40:53.511Z</updated>
   <language>zh_CN</language>
   <entry>
     <title>使用Mizuki创建个人博客</title>
@@ -152,6 +152,16 @@ pending_extraction（待提取） --&gt; admitted（采纳） --&gt; buffered（
 <li>强制封存长时间未更新的缓冲区</li>
 </ol>
 <p>但是它的方式依旧是把最终生成的任务重新丢到任务队列当中。</p>
+<hr />
+<h2>总结</h2>
+<p>OpenHuman 的记忆系统核心是“可追溯的原始记录 + 可编辑的可视化界面 + 可检索的结构化索引”，并通过 Memory Tree 把海量信息分层压缩、逐步抽象。</p>
+<ul>
+<li>底层用规范化 Markdown 承载原始内容与来源信息，保证透明与可追溯；</li>
+<li>借助 Obsidian 将记忆以图谱方式呈现，并允许用户直接修订；</li>
+<li>使用 SQLite 将分块、向量、树结构与元数据组织起来，实现高效检索与溯源；</li>
+<li>Memory Tree 以 L0→L1→L2… 的“封存/压缩”机制，把新鲜细节逐层汇聚成稳定摘要，同时分别在来源树、主题树、全局树三条轴线上组织信息。</li>
+</ul>
+<p>整体上，它更像一个“分层缓存 + 可解释摘要”的记忆工程：既能持续摄入新信息，又能在不丢失溯源的前提下保持可用性与可扩展性。</p>
 ]]></content>
     <author>
       <name>Removel鱼梦</name>
