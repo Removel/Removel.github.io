@@ -26,6 +26,614 @@
 &lt;h2&gt;展望&lt;/h2&gt;
 &lt;p&gt;这是一个全新的开始，我期待在这里记录我的成长轨迹，分享技术心得，也希望能够与更多志同道合的朋友交流学习。&lt;/p&gt;
 &lt;p&gt;欢迎来到我的博客！🎉&lt;/p&gt;
+</content:encoded></item><item><title>论文阅读：模型生成技能的提取、消费与自进化</title><link>https://removel.github.io/posts/26-06-02_%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E6%97%A5%E5%B8%B8/2026-06-02_paper-reading-agent-skills/</link><guid isPermaLink="true">https://removel.github.io/posts/26-06-02_%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB%E6%97%A5%E5%B8%B8/2026-06-02_paper-reading-agent-skills/</guid><description>两篇论文阅读心得：《From Raw Experience to Skill Consumption》与《Executive Strategy for Self-Evolving Agent Skills》</description><pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;论文阅读：模型生成技能的提取、消费与自进化&lt;/h1&gt;
+&lt;h2&gt;三、论文：《From Raw Experience to Skill Consumption: A Systematic Study of Model-Generated Agent Skills》&lt;/h2&gt;
+&lt;h3&gt;1、观点1：模型生成技能整体有益，但存在显著的负迁移现象；提取器与目标模型的表现并非一致 —— 一个模型可能是优秀的提取器，却是糟糕的使用者，反之亦然；技能效用与模型规模、基础任务性能无关。&lt;/h3&gt;
+&lt;p&gt;实验设计：&lt;/p&gt;
+&lt;h4&gt;2.1：实验设计哲学：全生命周期&lt;/h4&gt;
+&lt;p&gt;该论文将skill的生成总结使用等生命周期总结为了三个阶段： &quot;经验生成 → 技能提取 → 技能消费&quot;。即工作中产生经验，从经验中提取成果，再将这些成果复用到下一轮工作当中，形成闭环。然而实验将总结出来的skill进行测试看性能是否增长。&lt;/p&gt;
+&lt;h4&gt;2.2：实验模块&lt;/h4&gt;
+&lt;p&gt;总共涉及到5个日常生活常见的任务领域：
+ALFWorld：具身家庭任务，需物理常识、探索、多步规划；
+SpreadsheetBench：电子表格操作，需表格检查、公式推理、筛选、编辑；
+SWE-bench-Verified：真实软件工程任务，需代码理解、故障定位、补丁生成；
+SEAL-0：网页搜索问答，需检索、证据合成、多跳推理；
+BFCL-v4：工具调用任务，需函数选择、参数提取、类型匹配、多轮工具使用。
+常见的模型选择：将模型划分为目标模型和提取器，共有以下：
+目标模型：GPT-5.4、GPT-5.4-mini、Gemini-3.1-Pro、Gemini-3.1-FL、Qwen3.5-35B、Qwen3.5-9B；
+提取器：排除无法稳定遵循结构化协议的 Qwen3.5-9B，其余 5 个。&lt;/p&gt;
+&lt;h3&gt;3、实验步骤&lt;/h3&gt;
+&lt;p&gt;生成经验：训练集+测试集，让模型运行，收集轨迹，形成经验池
+技能提取：让提取器从经验池提取，使用一个统一好的框架抽成一个领域相关的技能，人工不介入
+将上面生成的技能放入目标模型的system prompt当中，再在同一个测试集上运行，并进行评估&lt;/p&gt;
+&lt;h3&gt;4、评估指标&lt;/h3&gt;
+&lt;h4&gt;（1）Extraction Efficacy（EE）提取效能&lt;/h4&gt;
+&lt;p&gt;固定提取器 E，看它给所有目标模型抽技能，平均能提多少分
+EE(E) = avg( Δ(E,M1), Δ(E,M2), ... )
+→ 衡量：这个提取器稳不稳定、好不好用&lt;/p&gt;
+&lt;h4&gt;（2）Target Evolvability（TE）目标可演化性&lt;/h4&gt;
+&lt;p&gt;固定目标 M，看它从所有提取器获得技能，平均能提多少分
+TE(M) = avg( Δ(E1,M), Δ(E2,M), ... )
+→ 衡量：这个模型容不容易被技能提升
+&lt;img src=&quot;https://removel.github.io/_astro/image1.C6LfkiJi_rpCwx.webp&quot; alt=&quot;图片&quot; /&gt;
+实验结论
+（1）模型生成领域级技能整体有益但非普遍有效，负迁移不可忽视。
+（2）技能效用由提取器、目标模型、领域三者共同决定，与模型规模 / 基线性能无关。
+（3）技能效用不取决于格式 / 文本流畅度，而取决于失败机制编码、可执行特异性、高风险行为黑名单三类深层特征。
+（4）经验池的成败比例存在领域最优解，纯失败经验最差。
+（5）一个好的技能有以下规律：技能格式不影响效用，即体现形式效果影响不显著、文本合理性不预测效用，即读起来是否好和用起来是否有效关系不大、具体补救方案比广泛的建议更有效。&lt;/p&gt;
+&lt;h3&gt;6、实验创新点&lt;/h3&gt;
+&lt;p&gt;（1）首次全生命周期系统性研究：覆盖 5 大领域、6 个目标模型、5 个提取模型，完		 整回答技能 &quot;是否有用、为何有用、如何用好&quot;。
+（2）效用导向的评估体系：用性能增益 Δ替代主观文本评价，提出 EE/TE 指标量化		 提取与消费能力。
+（3）颠覆技能质量判断逻辑：证明文本流畅度与效用无关，发现 3 类真正决定效用的		 深层特征。
+（4）即插即用的元技能优化：无需修改提取 pipeline，仅用提示词引导就全面提升技		 能质量、消除负迁移。
+（5）经验配比的领域化结论：给出不同领域最优经验成败比例，为经验收集提供明确		 指导。&lt;/p&gt;
+&lt;h2&gt;论文：《Executive Strategy for Self-Evolving Agent Skills》&lt;/h2&gt;
+&lt;h3&gt;1、核心观点：&lt;/h3&gt;
+&lt;p&gt;现有智能体技能（手工编写、一次性生成、宽松自迭代）缺乏深度学习式的优化控制，无法在反馈下稳定提升。
+提出将技能文档作为可训练的外部状态，用独立优化器模型进行可控文本空间优化，实现冻结模型下的领域自适应。
+SkillOpt 是首个系统性、可控的文本空间技能优化器，通过有界编辑、验证门控、拒绝缓冲、慢更新等深度学习式机制，让技能进化稳定可复现。
+优化后的技能具备强跨模型、跨执行器、跨基准迁移能力，且最终产物紧凑可解释、部署无额外推理成本。&lt;/p&gt;
+&lt;h3&gt;2、实验设计&lt;/h3&gt;
+&lt;h4&gt;2.1 实验设计哲学：文本空间可控优化闭环&lt;/h4&gt;
+&lt;p&gt;将技能优化类比深度学习训练：技能文档 = 参数、轨迹编辑 = 梯度、编辑预算 = 学习率、验证集 = 早停 / 选择、慢更新 = 动量，实现稳定、可复现、可迁移的技能自进化。&lt;/p&gt;
+&lt;h4&gt;2.2 实验模块&lt;/h4&gt;
+&lt;p&gt;（1）覆盖 6 大任务领域
+·SearchQA：抽取式问答
+·SpreadsheetBench：电子表格操作与代码执行
+·OfficeQA：多轮工具办公问答
+·DocVQA：文档视觉问答
+·LiveMathematicianBench：数学多选推理
+·ALFWorld：具身交互与序列决策
+（2）模型与执行器设置
+·目标模型（7 个）：GPT-5.5/5.4/5.4-mini/5.4-nano/5.2、Qwen3.5-4B、Qwen3.6-35B-A3B
+·优化器模型：GPT-5.5（强优化器）/ 目标模型同源（匹配优化器）
+·三种执行器（harness）：Direct chat、Codex、Claude Code
+（3）对比基线（7 类）
+·无技能、人工编写技能、一次性 LLM 技能、Trace2Skill、TextGrad、GEPA、EvoSkill&lt;/p&gt;
+&lt;h3&gt;3. 实验步骤&lt;/h3&gt;
+&lt;p&gt;（1）固定目标模型 + 当前技能，在训练集上 rollout 一批轨迹，收集成功/失败案例。
+（2）优化器对失败 / 成功轨迹分别分析，输出结构化 add/delete/replace 编辑。
+（3）按文本学习率（编辑预算）合并、排序、裁剪编辑，生成候选技能。
+（4）在独立验证集评测，仅接受严格提升的编辑；拒绝项存入缓冲作为负反馈。
+（5）跨轮次总结长效规律，写入保护区域，保证长期稳定。
+（6）输出最优技能文件 best_skill.md，在独立测试集报告效果。&lt;/p&gt;
+&lt;h3&gt;4. 评估指标&lt;/h3&gt;
+&lt;p&gt;·绝对准确率提升：SkillOpt 得分 − 无技能基线得分
+·相对超越幅度：对比所有基线的最优值的增益
+·迁移率：跨模型 / 跨执行器 / 跨基准保留的性能增益
+·组件有效性：消融各机制（学习率、缓冲、慢更新）的性能下降幅度
+&lt;img src=&quot;https://removel.github.io/_astro/image2.B-lFbqim_1S5UFr.webp&quot; alt=&quot;图片&quot; /&gt;&lt;/p&gt;
+&lt;h2&gt;三、实验结论&lt;/h2&gt;
+&lt;p&gt;SkillOpt 在全部 52 个（模型 × 领域 × 执行器）组合中全部最优或并列最优。
+在 GPT-5.5 上平均提升 +23.5 点（对话）、+24.8 点（Codex）、+19.1 点（Claude Code）。
+技能效用不依赖模型规模，小模型受益幅度更高；优化器越强，最终技能越好。
+技能更新极少即可大幅提升（平均仅 1–4 次接受编辑），最终技能紧凑（300–2000 token）。
+关键机制缺一不可：有界学习率、验证门控、拒绝编辑缓冲、epoch 慢更新共同保证稳定优化。
+优化出的技能是过程性通用规则，而非针对样例的死记硬背，因此可跨尺度、跨环境迁移。&lt;/p&gt;
+&lt;h2&gt;四、实验创新点&lt;/h2&gt;
+&lt;p&gt;1、首次将技能进化建模为可控文本空间优化，用深度学习训练范式规范技能迭代，告别直觉式、不可控的自修改。
+2、全套类梯度优化机制迁移到自然语言，让文本学习率、小批量反思、验证门控、拒绝缓冲、动量式慢更新，完整可解释。
+3、6 基准、7 模型、3 执行器、52 格全部最优，效果稳定可复现。涵盖范围广
+4、训练完仅输出一个 .md 技能文件，不修改模型权重、不增加推理调用，跨平台复用。（这个跟我们的设计最终输出很相似，不过我们的输出技能文件更多）
+5、技能文本短小可阅读、可人工修改、可安全上线。&lt;/p&gt;
+&lt;h2&gt;心得：&lt;/h2&gt;
+&lt;p&gt;综上，根据这些学习到的知识，有以下感悟：
+模型的心智就好像是那一堆固定好的参数，由于参数当中无记忆，或者难以使用成本较低的方式通过参数层面固定记忆，那么我们可以发挥模型高速阅读的长处，我们通过注入记忆相关的文本让模型短暂的拥有记忆，那么skill和给定的记忆文本质量将要进行严格的把控
+在之前阅读过的论文和上面阅读过的论文而言，都总结出了一个核心要点：一个好的skill的内容不应当只注重于格式等表面信息，而是应当切实的记录一些宝贵的经验：具体的动作、禁止的操作、提高效率的技能等。这跟现实生活当中我们真人的学习很像，我们是否可以通过自己学习的方式找到一些灵感？
+训练、进化的过程应当客观而非主观，并且更新的逻辑并非只是产出-对比-更新那么简单，SkillOpt这篇论文就提供了学习率-验证集-缓冲池-慢更新的一个进化流程&lt;/p&gt;
+</content:encoded></item><item><title>关于Hy-Memory的原理与个人思考</title><link>https://removel.github.io/posts/26-06-02_hy-memory%E5%8E%9F%E7%90%86%E6%80%9D%E8%80%83/2026-06-02_hy-memory-principles/</link><guid isPermaLink="true">https://removel.github.io/posts/26-06-02_hy-memory%E5%8E%9F%E7%90%86%E6%80%9D%E8%80%83/2026-06-02_hy-memory-principles/</guid><description>深入分析腾讯混元Hy-Memory的六层记忆框架、双系统架构与演化链机制</description><pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;关于Hy-Memory的原理与个人思考&lt;/h1&gt;
+&lt;h2&gt;二、Hy-Memory&lt;/h2&gt;
+&lt;h3&gt;1：Hy-Memory的主要功能&lt;/h3&gt;
+&lt;p&gt;·六层记忆框架：将记忆分为原始痕迹、原子事实、身份画像、会话摘要、心智模型、前瞻意图六层，每层独立职责与检索权重。
+·System1/System2 双系统：System1 毫秒级实时处理 L1-L4 记忆写入，System2 后台异步沉淀 L5-L6 高阶认知。
+·演化链机制：通过 supersedes 指针将记忆串成因果链，命中任意节点自动展开完整态度演变。
+·记忆合并去重：同类事实自动归并，冲突偏好自动刷新，避免新旧并存形成噪声库。
+·跨 Session 连续记忆：支持昨天关闭今天继续，Agent 能无缝接续长期任务上下文。
+总结：第一：从多个角度划分并持久化了特定化的记忆 第二：使用指针+双系统+去重等操作维护记忆&lt;/p&gt;
+&lt;h3&gt;2：Hy-Memory的技术原理&lt;/h3&gt;
+&lt;p&gt;·分层存储架构：L1 原始对话、L2 原子事实、L3 身份画像、L4 会话摘要、L5 心智模型、·L6 前瞻意图，每层采用不同加工策略。
+·System1 快路径：用户发送消息时实时写入原始痕迹、抽取事实、更新画像、压缩会话摘要，毫秒级闭环。
+·System2 慢路径：后台异步运行，从行为中抽象心智模型、预测前瞻意图，秒到分钟级沉淀。
+·演化链指针结构：新记忆写入时通过 supersedes 指针指向旧记忆，形成双向可遍历的因果链。
+·注意力闸门机制：System1 中设置注意力判断，决定哪些信息值得加工写入深层记忆。
+&lt;img src=&quot;./images/image1.png&quot; alt=&quot;图片&quot; /&gt;
+创新点在于使用指针链表，将一种数据结构转化成了带有逻辑性、可将记忆溯源的存储结构，相较于传统的向量召回，它能够更加的带有逻辑性和时间上的顺序性，它让召回的记忆有了顺序，让ai能够更加清除的知道记忆的全貌与来龙去脉：
+&lt;img src=&quot;./images/image2.png&quot; alt=&quot;图片&quot; /&gt;
+但是这种链表类记忆也存在弊端，这个模式只符合单线型的事情发展逻辑，如果需要多线叙事或者出现歧路那么链表似乎不再实用？&lt;/p&gt;
+&lt;h3&gt;3：详细了解与分析&lt;/h3&gt;
+&lt;h4&gt;3.1：六层记忆：&lt;/h4&gt;
+&lt;p&gt;快速响应级
+L1级：原始痕迹，该原始痕迹是你的每一次对话的内容
+L2级：原子事实：注意力闸门—》特训之后的小模型，由这个快速响应的小模型判断这个原始痕迹当中的事实是否需要记录，比如：&quot;你好！&quot;—》显然不用，&quot;我今天写了一篇关于腾讯混元的Hy-Memory的文章&quot;—》显然需要记录成：Xxx用户在Xxx时间写了一篇关于Hy-Memory的文章，然后记录下来。
+L3级：身份画像：用户是否提供了用户信息/有关能够描述一个用户的信息，将其记录，相同的通过记忆力闸门进行处理。在我的项目OneAndOnly当中也由类似的处理方法
+L4级别：对话摘要：每个对话都会产生总结，以便为了后续使用
+静默处理级
+L5级别：通过以上信息，勾画出用户的性格与认知框架
+L6级别：从当前的内容与事件等内容推测之后用户的行为&lt;/p&gt;
+&lt;h4&gt;3.2：记忆演化&lt;/h4&gt;
+&lt;p&gt;有一句话说的好，人是善变的动物。在马克思主义哲学当中，任何事物都是在不断运动的，运动是绝对的，静止是相对的。然而，agent存储的记忆对于我们来说是在那个时间点上是静止的，但是我们是不断运动变化的，因此记忆也要不断的更新变化。
+在Hy-Memory当中，记忆不会被不断的更新当中相互冲突，它会在不断的版本更新中保留最新的版本。这样做的好处就是内容会被不断沉淀，直到高度抽象化印象化的记录。
+但是这样似乎也有坏处，它只保留了最新的画像，那么为什么会产生这样的画像？为什么会产生这样的变化？它是否还会记得你之前喜欢的是a但是后面喜欢的是b？我们经常在影视作品当中看到主人公的某个大的变化或许来自于之前日常生活中某个很小的不起眼的变化，这些不起眼的变化在日复一日的累积下量变跃升为质变，它会产生一个大的影响结果。总之意思就是，人的行为有时候不符合逻辑或者情理发展，也许并不是这个人是突然脑子瓦特了，而是因为之前的往日种种小变化不断堆积形成的蝴蝶效应。智能体如果没有注意到这些小的变化，细腻到对这些小细节进行把控的话，或许它永远无法真正的理解人类（咕咕嘎嘎~想要成为人类）。
+举个例子：我一直以来都喜欢吃番茄炒蛋，但是我喜欢吃甜口的，后来随着时间发现我喜欢吃咸口的了。这中间发生了什么会导致这样的变化？也许是我的生活换了地方，或许是我突然发现了咸口的更好吃。但是这样的话智能体只会记录L5级别的记忆为用户喜欢吃咸口的番茄炒蛋，但是在L6级别进行推测的时候不能从这个变化原因推测可能发生的情况。也许现实情况是：我工作压力大—》经常吃饭店—》饭店是咸口所以逐渐吃咸口—》推测：可能出现心脑血管疾病。但是如果是仅有吃咸口的番茄炒蛋似乎并不足以推测出来这个可能发生的事件。当然，可能发生心脑血管疾病的这个推测或许可以从别的事件推出来。但是这是建立在智能体对你的信息细节拿到更多透露处更多的情况。或许如果智能体只知道你喜欢吃什么口味的番茄炒蛋呢？
+总之这里似乎有一种局限性。智能体或许需要从对话当中获取到更多的细节，并将这些细节进行一定程度上的联想与推理。这样才能更好的理解人类，学习人类。
+我们是否可以通过某些结构工程，抓到这些内容，将&quot;快照&quot;变成&quot;流&quot;，回溯事件与时间，给出更加立体的建议？
+针对这个，Hy-Memory给出了一个解决方案：记忆演化链条：将每个节点都保存为一个快照，按照某种排序方式将这些节点形成一个链条。在之后的操作比如回忆的时候，就是对该链条进行增删改查。在对应一件事情的时候如果命中了链条上的某个节点，那么该节点对应的整个链条都会被拉出来给智能体。
+这种方式一定程度上解决了我们刚刚说的问题，但是其实还是有局限性的。生活当中的每件事情都是有关联的，不管这个关联是否能被人为的感受到。在马哲当中，世间万物都是普遍联系的，没有完全独立的事物。一个事件对应的记忆演化链条或许会影响别的事件记忆演化链条，但是我们的链条当前似乎都是相互独立的。这种数据结构似乎并完全适合现实当中的联系。链条或许能够非常完善的记录事件的每个状态与变化，但是在联动上似乎缺乏了灵活性。
+事物是复杂的，人在内的一个对象，都需要通过长期的、不同角度的观测和验证，才能从将对一个对象的认知从思维具体到思维抽象再到思维具体的过程。智能体记忆、理解的形成也同样的离不开和人的长期交互。任何想要从仅仅几个事件当中就想要推测未来的行动的行为，都是不理智不符合逻辑的。这种行为的本身脱离了客观规律。用深度学习的话讲或许可以比喻为数据集过少导致训练过拟合。&lt;/p&gt;
+&lt;h3&gt;4：总结&lt;/h3&gt;
+&lt;p&gt;总之，根据这些内容我发现，记忆的长期存储有以下特点：
+记忆的存储模式总是是：细散零碎-》结构化完整化-》抽象化高度持久化
+记忆的存储形式常常使用到数据结构当中的某类，不同的数据结构会在不同场景下的记忆有奇效：比如openhuman的树模型、my-memory的链表模型。基于这种，我有一个猜想：比如在短期的记忆我们是否可以使用双向链表+哈希表模拟LRU缓存记忆？长期的相互关联的记忆是否可以使用无向图/有向图模拟各个记忆之间的联系？&lt;/p&gt;
+</content:encoded></item><item><title>Agent长久记忆实现架构：OneAndOnly项目的记忆系统设计</title><link>https://removel.github.io/posts/26-06-02_oneandonly%E8%AE%B0%E5%BF%86%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/2026-06-02_oneandonly-memory-architecture/</link><guid isPermaLink="true">https://removel.github.io/posts/26-06-02_oneandonly%E8%AE%B0%E5%BF%86%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/2026-06-02_oneandonly-memory-architecture/</guid><description>OneAndOnly项目中混合存储架构的记忆系统设计，结合Chroma向量数据库与Markdown文档的双层存储策略</description><pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;Agent长久记忆实现架构&lt;/h1&gt;
+&lt;h2&gt;概述&lt;/h2&gt;
+&lt;p&gt;该项目采用&lt;strong&gt;混合存储架构&lt;/strong&gt;实现Agent的长久记忆功能，结合向量数据库的语义检索能力和Markdown文档的结构化存储优势，构建了一个完整的记忆管理系统。&lt;/p&gt;
+&lt;h2&gt;存储架构设计&lt;/h2&gt;
+&lt;h3&gt;双层存储策略&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;┌─────────────────────────────────────────────────────────────┐
+│                    长久记忆存储系统                          │
+├─────────────────────────────────────────────────────────────┤
+│  向量数据库 (Chroma)           │    Markdown文档             │
+│  - 动态记忆                   │    - 静态档案               │
+│  - 非结构化数据               │    - 结构化数据             │
+│  - 语义检索                   │    - 不常变化               │
+│  - 事件、观点、情绪等         │    - 基础属性、能力等       │
+└─────────────────────────────────────────────────────────────┘
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;存储分工原则&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;向量库&lt;/strong&gt;：存储动态、非结构化、需语义检索的记忆（事件、观点、情绪、短期规划等）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;MD文档&lt;/strong&gt;：存储静态、结构化、不常变化的个人档案信息（基础属性、长期能力、固定偏好等）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;记忆分类体系&lt;/h2&gt;
+&lt;h3&gt;七大维度分类&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;维度&lt;/th&gt;
+&lt;th&gt;存储方式&lt;/th&gt;
+&lt;th&gt;内容特点&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;事件经历维度&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;向量库&lt;/td&gt;
+&lt;td&gt;近期/远期 + 重要/普通 四象限时间管理&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;三观与观念维度&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;向量库&lt;/td&gt;
+&lt;td&gt;世界观、价值观、人生观、恋爱观等&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;个人基础属性维度&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;MD文档&lt;/td&gt;
+&lt;td&gt;年龄、性别、职业、身高体重等静态信息&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;性格与情绪维度&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;向量库&lt;/td&gt;
+&lt;td&gt;性格特质、情绪模式、表达方式等&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;偏好与厌恶维度&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;向量库&lt;/td&gt;
+&lt;td&gt;兴趣爱好、喜好倾向、厌恶排斥等&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;能力与规划维度&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;混合&lt;/td&gt;
+&lt;td&gt;技能能力(MD)、短期规划(向量)、长期目标(MD)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;社交与关系维度&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;向量库&lt;/td&gt;
+&lt;td&gt;亲密关系、亲友关系、同辈关系等&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;元数据设计&lt;/h3&gt;
+&lt;p&gt;每条向量记忆包含以下元数据：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &quot;category&quot;: &quot;一级大类&quot;,           # 7个维度之一
+    &quot;importance&quot;: &quot;high/medium/low&quot;,  # 重要性等级
+    &quot;timestamp&quot;: &quot;2024-01-01&quot;,        # 时间戳
+    &quot;date&quot;: 1704067200,               # 整数时间戳（用于查询）
+    &quot;event_type&quot;: &quot;event/memory&quot;,     # 类型标识
+    &quot;id&quot;: &quot;uuid&quot;                      # 唯一标识符
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;核心组件实现&lt;/h2&gt;
+&lt;h3&gt;1. 记忆管理Agent&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;Memory Manager Agent&lt;/strong&gt; 负责记忆的检索和更新，配置如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;模型&lt;/strong&gt;: GPT-4o-mini&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;温度&lt;/strong&gt;: 0.3（确保事实准确性）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;工具&lt;/strong&gt;: 8个专用记忆管理工具&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;角色&lt;/strong&gt;: 记忆管理专家，主动识别和存储用户信息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;2. 记忆检索流程&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;用户输入 → Memory Retrieve节点 → Memory Manager Agent 
+                                      ↓
+                              调用查询工具
+                                      ↓
+                    ┌─────────────────┴─────────────────┐
+                    │                                   │
+              向量数据库查询                      MD文档读取
+                    │                                   │
+              语义检索+过滤                        静态档案
+                    │                                   │
+                    └─────────────────┬─────────────────┘
+                                      ↓
+                              整合记忆内容
+                                      ↓
+                              返回给对话流程
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;检索工具&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;query_from_category&lt;/code&gt;: 按类别检索&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;query_from_category_and_time&lt;/code&gt;: 按类别+时间范围检索&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;query_events&lt;/code&gt;: 按时间类型+重要性检索事件&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;read_user_info&lt;/code&gt;: 读取用户静态档案&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;3. 记忆更新流程&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;对话结束 → Final Output节点 → 异步记忆更新
+                                      ↓
+                              Memory Manager Agent
+                                      ↓
+                    ┌─────────────────┴─────────────────┐
+                    │                                   │
+              识别静态信息                      识别动态信息
+                    │                                   │
+              edit_user_info                     store_event/store_memory
+                    │                                   │
+              更新MD文档                         更新向量数据库
+                    │                                   │
+                    └─────────────────┬─────────────────┘
+                                      ↓
+                              记忆更新完成
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;存储工具&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;store_event&lt;/code&gt;: 存储事件记忆（带时间戳和重要性）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;store_memory&lt;/code&gt;: 存储其他类型记忆&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;edit_user_info&lt;/code&gt;: 更新用户静态档案&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;update_memory_content&lt;/code&gt;: 更新已有记忆内容&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;update_memory_importance&lt;/code&gt;: 更新记忆重要性&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;delete_memory&lt;/code&gt;: 删除记忆&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;多智能体协作机制&lt;/h2&gt;
+&lt;h3&gt;智能体角色分工&lt;/h3&gt;
+&lt;p&gt;系统采用&lt;strong&gt;多智能体协作&lt;/strong&gt;模式，每个Agent专注于特定任务，通过LangGraph工作流协调配合：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Agent&lt;/th&gt;
+&lt;th&gt;模型&lt;/th&gt;
+&lt;th&gt;温度&lt;/th&gt;
+&lt;th&gt;主要职责&lt;/th&gt;
+&lt;th&gt;记忆相关功能&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Memory Manager&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;GPT-4o-mini&lt;/td&gt;
+&lt;td&gt;0.3&lt;/td&gt;
+&lt;td&gt;记忆检索与更新&lt;/td&gt;
+&lt;td&gt;检索相关记忆、识别并存储新信息&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;PlanExecute&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;DeepSeek-v3.2&lt;/td&gt;
+&lt;td&gt;0.6&lt;/td&gt;
+&lt;td&gt;理解意图、生成回复&lt;/td&gt;
+&lt;td&gt;使用记忆上下文生成个性化回复&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Evaluator&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;DeepSeek-v4-flash&lt;/td&gt;
+&lt;td&gt;0.2&lt;/td&gt;
+&lt;td&gt;评估回复质量&lt;/td&gt;
+&lt;td&gt;确保回复与记忆一致性&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;strong&gt;Summarizer&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;GPT-4o&lt;/td&gt;
+&lt;td&gt;0.4&lt;/td&gt;
+&lt;td&gt;最终总结与情绪分析&lt;/td&gt;
+&lt;td&gt;触发异步记忆更新&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;协作流程&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;┌─────────────────────────────────────────────────────────────┐
+│                    多智能体协作流程                          │
+└─────────────────────────────────────────────────────────────┘
+
+用户输入
+    ↓
+┌───────────────────┐
+│ Memory Manager    │ ← 检索相关记忆，构建上下文
+│ (记忆检索模式)     │
+└────────┬──────────┘
+         ↓ 记忆信息
+┌───────────────────┐
+│ PlanExecute       │ ← 基于记忆生成个性化回复
+│ (对话执行模式)     │
+└────────┬──────────┘
+         ↓ 回复结果
+┌───────────────────┐
+│ Evaluator         │ ← 评估回复质量和记忆一致性
+│ (质量检查模式)     │   最多重试3次
+└────────┬──────────┘
+         ↓ 最终回复
+┌───────────────────┐
+│ Summarizer        │ ← 生成最终回复 + 触发异步记忆更新
+│ (总结更新模式)     │
+└────────┬──────────┘
+         ↓
+    用户接收
+         ↓
+┌───────────────────┐
+│ Memory Manager    │ ← 异步更新记忆库
+│ (记忆更新模式)     │
+└───────────────────┘
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;记忆在智能体间的传递&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;# GlobalState中的记忆字段传递
+class GlobalState(TypedDict):
+    memory: Optional[str]      # Memory Manager检索的记忆
+    # 其他智能体通过state[&quot;memory&quot;]访问记忆信息
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;传递链路&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Memory Manager&lt;/strong&gt; → &lt;code&gt;state[&quot;memory&quot;]&lt;/code&gt; → &lt;strong&gt;PlanExecute&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;PlanExecute&lt;/strong&gt; → 基于记忆生成回复 → &lt;strong&gt;Evaluator&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Evaluator&lt;/strong&gt; → 检查记忆一致性 → &lt;strong&gt;Summarizer&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Summarizer&lt;/strong&gt; → 触发异步更新 → &lt;strong&gt;Memory Manager&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;记忆更新与维护机制&lt;/h2&gt;
+&lt;h3&gt;双模式记忆管理&lt;/h3&gt;
+&lt;p&gt;Memory Manager Agent采用&lt;strong&gt;双模式&lt;/strong&gt;设计，通过不同的系统提示词实现检索和更新功能：&lt;/p&gt;
+&lt;h4&gt;检索模式 (memory_manager_system_prompt_find)&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;触发时机&lt;/strong&gt;: 每次对话开始时&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;主要任务&lt;/strong&gt;: 理解用户意图，检索相关记忆&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;核心策略&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;分析对话主题和关键词&lt;/li&gt;
+&lt;li&gt;选择合适的检索工具（类别、时间、事件）&lt;/li&gt;
+&lt;li&gt;整合多维度记忆信息&lt;/li&gt;
+&lt;li&gt;返回结构化记忆内容&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;更新模式 (memory_manager_system_prompt_summarize)&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;触发时机&lt;/strong&gt;: 对话结束后异步执行&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;主要任务&lt;/strong&gt;: 主动识别并存储新信息&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;核心策略&lt;/strong&gt;:
+&lt;ul&gt;
+&lt;li&gt;扫描对话内容，识别用户信息&lt;/li&gt;
+&lt;li&gt;区分静态信息和动态信息&lt;/li&gt;
+&lt;li&gt;选择合适的存储工具&lt;/li&gt;
+&lt;li&gt;维护记忆库的准确性和完整性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;记忆更新流程详解&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;对话结束 → Final Output节点
+              ↓
+         启动异步线程
+              ↓
+    ┌─────────────────────┐
+    │ Memory Manager      │
+    │ (更新模式)          │
+    └──────────┬──────────┘
+               ↓
+    ┌─────────────────────┐
+    │ 信息识别与分类      │
+    └──────────┬──────────┘
+               ↓
+    ┌─────────────────────┐
+    │ 静态信息？          │
+    └──┬──────────────┬───┘
+       │ 是           │ 否
+       ↓              ↓
+┌──────────────┐  ┌──────────────┐
+│read_user_info│  │分析信息类型  │
+│获取现有档案  │  └──────┬───────┘
+└──────┬───────┘         │
+       │         ┌───────┴───────┐
+       │         │事件？  其他？  │
+       │         ↓       ↓       │
+       │    ┌────────┐ ┌────────┐ │
+       │    │store_  │ │store_  │ │
+       │    │event   │ │memory  │ │
+       │    └────────┘ └────────┘ │
+       │         │       │       │
+       └─────────┴───────┴───────┘
+                 ↓
+        ┌────────────────┐
+        │ 记忆更新完成    │
+        └────────────────┘
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;记忆维护策略&lt;/h3&gt;
+&lt;h4&gt;1. 主动识别机制&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;实时扫描&lt;/strong&gt;: 监控每轮对话内容&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;关键词匹配&lt;/strong&gt;: 识别个人信息表达模式&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;上下文理解&lt;/strong&gt;: 结合对话历史判断信息重要性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;2. 智能分类存储&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;# 信息类型判断逻辑
+if is_static_info(user_input):
+    # 静态信息 → MD文档
+    if is_new_static_info():
+        read_user_info()  # 先读取现有档案
+        edit_user_info()  # 整合后更新
+elif is_event(user_input):
+    # 事件记忆 → 向量库
+    store_event(importance=assess_importance())
+else:
+    # 其他动态记忆 → 向量库
+    category = classify_category()
+    store_memory(category=category)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;3. 去重与冲突处理&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;相似度检测&lt;/strong&gt;: 避免存储重复信息&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;时间戳比较&lt;/strong&gt;: 保留最新信息&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;重要性评估&lt;/strong&gt;: 高重要性信息优先保留&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;冲突解决&lt;/strong&gt;: 新信息覆盖旧信息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;4. 角色信息过滤&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;# 严格区分用户信息和角色信息
+USER_PATTERNS = [
+    &quot;我是...&quot;, &quot;我叫...&quot;, &quot;我的...&quot;,  # 用户自称
+    &quot;我觉得...&quot;, &quot;我想...&quot;, &quot;我喜欢...&quot;  # 用户表达
+]
+
+ROLE_PATTERNS = [
+    &quot;我是[角色名]...&quot;, &quot;我是你的...&quot;,  #角色自称
+    &quot;你可以叫我...&quot;, &quot;我的设定是...&quot;  # 角色设定
+]
+
+# 只存储匹配USER_PATTERNS的信息
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;记忆质量保证&lt;/h3&gt;
+&lt;h4&gt;1. 多层验证&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Agent自我验证&lt;/strong&gt;: Memory Manager内部检查信息合理性&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Evaluator验证&lt;/strong&gt;: 检查回复与记忆的一致性&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;用户反馈&lt;/strong&gt;: 通过对话质量间接验证记忆准确性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;2. 记忆重要性管理&lt;/h4&gt;
+&lt;pre&gt;&lt;code&gt;# 重要性等级定义
+IMPORTANCE_LEVELS = {
+    &quot;high&quot;: &quot;关键人生事件、重要决策、核心价值观&quot;,
+    &quot;medium&quot;: &quot;日常经历、一般观点、常规偏好&quot;,
+    &quot;low&quot;: &quot;琐碎小事、临时想法、无关紧要的信息&quot;
+}
+
+# 动态调整机制
+def update_importance(memory_id, new_importance):
+    update_memory_importance(memory_id, new_importance)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4&gt;3. 时效性管理&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;时间衰减&lt;/strong&gt;: 远期记忆重要性逐渐降低&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;近期优先&lt;/strong&gt;: 检索时优先返回近期记忆&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;定期清理&lt;/strong&gt;: 删除过时或低价值记忆&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;异步更新实现&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;# final_output.py中的异步更新
+def update_memory_async(user_input: str, conversation_history: list = None):
+    try:
+        memory_manager = AgentFactory.create_role_agent(
+            &quot;memory_manager&quot;,
+            tools_for_memory_manager,
+            memory_manager_system_prompt_summarize,  # 使用更新模式提示词
+        )
+        
+        messages = []
+        if conversation_history:
+            messages.extend(conversation_history)
+        messages.append(HumanMessage(
+            content=f&quot;这是新的用户输入: &apos;{user_input}&apos;\n你不需要对用户输入回应，请你开始更新记忆&quot;
+        ))
+
+        response = memory_manager.invoke({&quot;messages&quot;: messages})
+        logger.info(&quot;更新记忆成功&quot;)
+    except Exception as e:
+        logger.error(f&quot;更新记忆失败: {e}&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;记忆一致性保证&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;状态同步&lt;/strong&gt;: 通过GlobalState确保所有Agent访问相同的记忆数据&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;事务处理&lt;/strong&gt;: 记忆更新操作保证原子性&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;版本控制&lt;/strong&gt;: 重要记忆变更保留历史记录&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;冲突检测&lt;/strong&gt;: 检测并解决记忆冲突&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;技术实现细节&lt;/h2&gt;
+&lt;h3&gt;向量数据库配置&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;# 使用Chroma向量数据库
+db_path = &quot;database/agent/vector_memory.db&quot;
+client = chromadb.PersistentClient(path=db_path)
+collection = client.get_or_create_collection(name=&quot;vector_memory&quot;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;查询策略&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;类别过滤&lt;/strong&gt;: 通过&lt;code&gt;where={&quot;category&quot;: &quot;xxx&quot;}&lt;/code&gt;过滤&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;时间范围&lt;/strong&gt;: 使用整数时间戳进行范围查询&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;语义检索&lt;/strong&gt;: 基于向量相似度返回最相关的结果&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;重要性排序&lt;/strong&gt;: 结合距离和重要性等级&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;记忆更新策略&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;主动识别&lt;/strong&gt;: Agent自动扫描对话，识别需要存储的信息&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;分类存储&lt;/strong&gt;: 根据信息类型选择合适的存储工具&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;去重处理&lt;/strong&gt;: 避免重复存储相同或相似信息&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;角色过滤&lt;/strong&gt;: 严格区分用户信息和角色信息，只存储用户真实信息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;集成到对话流程&lt;/h2&gt;
+&lt;h3&gt;LangGraph状态管理&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;class GlobalState(TypedDict):
+    messages: list[BaseMessage]      # 对话历史
+    user_input: str                  # 用户输入
+    memory: Optional[str]            # 召回的长期记忆
+    # ... 其他状态字段
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;对话流程中的记忆节点&lt;/h3&gt;
+&lt;pre&gt;&lt;code&gt;START → memory_retrieve → plan_execute → evaluate → final_output → END
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;memory_retrieve&lt;/strong&gt;: 在对话开始前检索相关记忆&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;final_output&lt;/strong&gt;: 在对话结束后异步更新记忆&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;优势特点&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;混合存储&lt;/strong&gt;: 结合向量检索和结构化存储的优势&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;分类清晰&lt;/strong&gt;: 7维度分类体系，覆盖用户全方面信息&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;时序管理&lt;/strong&gt;: 支持近期/远期、重要/普通的四象限管理&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;主动更新&lt;/strong&gt;: Agent自动识别和存储新信息&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;语义检索&lt;/strong&gt;: 基于向量相似度的智能检索&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;灵活查询&lt;/strong&gt;: 支持多维度组合查询&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;持久化存储&lt;/strong&gt;: 使用SQLite和Chroma确保持久化&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;多智能体协作&lt;/strong&gt;: 4个专业Agent分工协作，各司其职&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;双模式记忆管理&lt;/strong&gt;: 检索和更新分离，提高效率&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;异步更新&lt;/strong&gt;: 不阻塞主对话流程，用户体验更佳&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;质量保证&lt;/strong&gt;: 多层验证机制确保记忆准确性&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;智能过滤&lt;/strong&gt;: 严格区分用户信息和角色信息&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;文件结构&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;agent/
+├── graph/
+│   ├── node/
+│   │   ├── memory_retrieve.py      # 记忆检索节点
+│   │   └── final_output.py         # 记忆更新节点
+│   └── state.py                    # 全局状态定义
+├── tools/
+│   └── tools_for_memory_manager/
+│       ├── query_vector_memory.py  # 查询工具
+│       ├── store_vector_memory.py  # 存储工具
+│       ├── edit_vector_memory.py   # 编辑工具
+│       ├── read_user_info.py       # 读取用户档案
+│       └── edit_user_info.py       # 编辑用户档案
+├── prompt/
+│   └── memory_manager_prompt.py    # 记忆管理提示词
+└── config/
+    └── memory_manager.yaml         # 记忆管理配置
+
+database/agent/
+├── vector_memory.db/               # Chroma向量数据库
+├── checkpoints.db                  # LangGraph检查点
+└── user_info.md                    # 用户静态档案
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;总结&lt;/h2&gt;
+&lt;p&gt;该项目的长久记忆实现通过&lt;strong&gt;混合存储架构&lt;/strong&gt;和&lt;strong&gt;智能记忆管理Agent&lt;/strong&gt;，构建了一个完整的记忆系统。向量数据库提供强大的语义检索能力，Markdown文档提供结构化的静态档案存储，配合Agent的主动识别和分类存储机制，实现了对用户信息的全面管理和智能召回。&lt;/p&gt;
 </content:encoded></item><item><title>从路由器选取到远程追番（二）：OpenWRT系统设置与Tailscale安装</title><link>https://removel.github.io/posts/26-06-01/2026-06-01_openwrt-tailscale-setup/</link><guid isPermaLink="true">https://removel.github.io/posts/26-06-01/2026-06-01_openwrt-tailscale-setup/</guid><description>OpenWRT系统设置与Tailscale虚拟局域网安装配置教程，实现远程追番的第二步</description><pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;1：系统设置&lt;/h2&gt;
 &lt;p&gt;（前提：请将你的路由器的WAN口接入到你家的光猫/已经接入网的路由器的LAN口相连，保证外部网络通畅以执行下面的所有操作）&lt;/p&gt;
 &lt;h3&gt;1.1：安装中文&lt;/h3&gt;
@@ -193,6 +801,78 @@ pending_extraction（待提取） --&amp;gt; admitted（采纳） --&amp;gt; buf
 &lt;li&gt;Memory Tree 以 L0→L1→L2… 的“封存/压缩”机制，把新鲜细节逐层汇聚成稳定摘要，同时分别在来源树、主题树、全局树三条轴线上组织信息。&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;整体上，它更像一个“分层缓存 + 可解释摘要”的记忆工程：既能持续摄入新信息，又能在不丢失溯源的前提下保持可用性与可扩展性。&lt;/p&gt;
+</content:encoded></item><item><title>自进化Agent综述：从模型中心到环境驱动的共进化</title><link>https://removel.github.io/posts/26-05-15/2026-05-15_self-evolving-agents-survey/</link><guid isPermaLink="true">https://removel.github.io/posts/26-05-15/2026-05-15_self-evolving-agents-survey/</guid><description>开会材料：自进化Agent系统性综述、EvoSkill与EvolveR框架、Hermes自进化机制</description><pubDate>Fri, 15 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;自进化Agent综述：从模型中心到环境驱动的共进化&lt;/h1&gt;
+&lt;p&gt;A Systematic Survey of Self-Evolving Agents: From Model-Centric to Environment-Driven Co-Evolution | TechRxiv
+·按「进化发生的位置」将现有研究划分为三条递进路线：
+模型中心自进化：
+挖掘模型自身潜在能力，不直接依赖外部环境
+推理时进化：不更新参数，靠增加测试计算提升单次输出可靠性，比如并行采样投票、多轮自我纠错、树/图结构推理
+2. 训练时进化：将能力写入模型参数实现长期提升，分为「离线合成驱动（模型自生成训练数据）」和「在线探索驱动（实时交互反馈、自博弈更新策略）」，代表工作包括R-Zero、Absolute Zero等
+环境中心自进化：
+进化来自模型对外部资源的利用，而非仅参数更新&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;静态知识演化：从被动检索升级为Agent主动判断知识缺口、自主完成搜索-验证-整合，典型如Agentic RAG、Deep Research类工作&lt;/li&gt;
+&lt;li&gt;动态经验演化：沉淀可复用的行为经验（工具调用顺序、错误恢复策略、工作流模板），区分离线经验编译、在线经验适配、终身经验进化三类&lt;/li&gt;
+&lt;li&gt;模块架构演化：记忆、工具、交互接口等组件自主迭代，比如自适应记忆系统、Agent自动创建/组合工具&lt;/li&gt;
+&lt;li&gt;多Agent拓扑演化：打破固定角色分工，让多Agent的协作结构、通信模式、团队配置动态优化
+模型-环境共进化：
+模型和环境双向驱动、同步迭代
+&lt;img src=&quot;https://removel.github.io/_astro/image1.DPO-udn7_pKYLd.webp&quot; alt=&quot;图片&quot; /&gt;
+1、弥补前两条路线的缺陷：既避免模型自进化的幻觉累积，也突破静态环境的任务限制。
+2、具体包括：①多Agent策略共进化（其他Agent构成动态环境，通过协作/竞争互相提供反馈）；②环境自适应训练（环境可按模型能力动态调整难度、生成多样化可验证任务，代表工作如Reasoning Gym、AgentGym）
+·自进化的一种方法：面向多智能体系统的自动化技能发现自进化框架
+EvoSkill: Automated Skill Discovery for Multi-Agent Systems
+核心通过迭代式失败分析自动发现、提炼可复用智能体技能，无需微调基础模型，将技能固化为含说明、元数据与脚本的结构化技能文件夹；
+&lt;img src=&quot;https://removel.github.io/_astro/image2.BmJMG7v2_Qof9q.webp&quot; alt=&quot;图片&quot; /&gt;
+（二）闭环进化流程
+初始化：设定帕累托前沿（保留 top-k 最优程序）、反馈历史，基线模型无技能。
+迭代循环
+1、选父程序：轮询从前沿选最优程序；
+2、收集失败案例：父程序执行任务，收集低于阈值的失败样本；
+3、提案：提案智能体分析失败，结合反馈历史，提出新建技能 / 优化旧技能；
+4、构建技能：技能构建智能体生成结构化技能；
+5、验证筛选：候选技能在验证集评估，仅提升性能才保留，更新前沿、剔除最差程序；
+6、记录反馈：提案、分数、结果存入反馈历史，避免重复错误。
+7、输出：迭代结束后，返回前沿中最优程序。
+&lt;img src=&quot;https://removel.github.io/_astro/image3.CrxQcRf7_11nTlg.webp&quot; alt=&quot;图片&quot; /&gt;
+·自进化的一种方法：EvolveR：从轨迹到原则的闭环
+https://arxiv.org/abs/2510.16079
+方法：
+一、volver 受人类 &quot;实践 — 反思&quot; 模式启发，包含三大核心组件：
+离线自蒸馏：冻结策略，将轨迹提炼为策略原则；
+在线交互：检索原则指导推理，生成高质量轨迹；
+策略进化：用强化学习更新策略，完成闭环。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3&gt;二、智能体交互形式化&lt;/h3&gt;
+&lt;p&gt;（1）智能体动作空间：
+1：检索经验库中的策略原则；
+2：检索外部知识库；
+3：输出最终答案。&lt;/p&gt;
+&lt;h3&gt;三、生命周期：从交互到原则&lt;/h3&gt;
+&lt;h4&gt;（1）离线自蒸馏生成策略原则&lt;/h4&gt;
+&lt;p&gt;1、原则提炼：智能体利用自身模型，将成功轨迹提炼为指导原则、失败轨迹提炼为警示原则。每条原则包含：
+自然语言描述；
+结构化知识三元组。[(对比任务, 需要, 双方数据), (结论, 依赖, 数据完整性)]
+（2）去重与整合：
+语义相似度过滤；
+模型二元判断；
+新原则加入、旧轨迹合并。&lt;/p&gt;
+&lt;h4&gt;2、在线交互&lt;/h4&gt;
+&lt;p&gt;原则指导推理：智能体随时检索原则，获得启发式指导，减少试错、提高效率。
+生成高质量轨迹：在原则引导下生成结构化交互数据，为下一轮蒸馏提供素材。&lt;/p&gt;
+&lt;h3&gt;（3） 策略进化：强化学习闭环&lt;/h3&gt;
+&lt;p&gt;结果奖励：答案正确与否（稀疏二元）；
+格式奖励：推理过程质量（密集）。
+策略优化（GRPO）： 采用 分组相对策略优化（GRPO），避免价值函数，稳定高效。核心：最大化目标函数，引入 KL 约束防止策略崩塌。
+成功轨迹 → 指导原则（Guiding Principle）：提炼 &quot;为什么成功、怎么做才对&quot;
+失败轨迹 → 警示原则（Cautionary Principle）：提炼 &quot;哪里错、以后避免什么&quot;
+使用过程：
+离线阶段，Agent 跑完一批任务之后，对所有轨迹做提炼，把具体的交互步骤抽象成更通用的&quot;策略原则&quot;，存入原则库。在线阶段，Agent 在新任务里实时检索这些原则，指导自己的行动，同时又产生新轨迹，反哺下一轮蒸馏。
+Hermes自进化代码层面讲解&lt;/p&gt;
+&lt;h3&gt;一、核心定位：Agent 的「经验笔记」系统&lt;/h3&gt;
+&lt;p&gt;普通 Agent 没有跨会话记忆，重复任务会反复踩坑；而 Hermes 会把成功流程提炼成 Skill（技能文档），下次自动加载，还能在使用过程中动态修正。
+它是当前主流开源 Agent 框架（LangChain、AutoGen 等）中，唯一内置完整自学习闭环的方案，实现了「经验提取 → 知识存储 → 智能检索 → 上下文注入 → 执行验证 → 自动改进」的全链路。&lt;/p&gt;
+&lt;h3&gt;二、Skills 全生命周期的 7 个阶段&lt;/h3&gt;
 </content:encoded></item><item><title>从路由器选型到远程追番（一）：路由器选取与系统刷取</title><link>https://removel.github.io/posts/26-05-11/2026-05-11_router-openwrt-guide/</link><guid isPermaLink="true">https://removel.github.io/posts/26-05-11/2026-05-11_router-openwrt-guide/</guid><description>以小米 AX3000T 为例，记录从路由器选型到刷入 OpenWrt 的完整过程：为什么要折腾、怎么避免变砖、TTL 串口 + U-Boot + TFTP 的关键步骤与坑点。</description><pubDate>Mon, 11 May 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h1&gt;从路由器选型到远程追番（一）：路由器选取与系统刷取&lt;/h1&gt;
 &lt;p&gt;——计算机网络是一个由无数计算机人搭起的喜马拉雅，我们有幸站在这样的山巅、站在巨人的肩膀上，继续构思、创造的循环。&lt;/p&gt;
 &lt;h2&gt;0、阅读指引（先看这个）&lt;/h2&gt;
