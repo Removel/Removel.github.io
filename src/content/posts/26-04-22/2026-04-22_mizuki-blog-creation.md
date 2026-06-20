@@ -5,7 +5,7 @@ description: 终于创建了自己的个人博客，使用GitHub上开源的Mizu
 tags: [博客, Mizuki, GitHub, 个人记录]
 category: 生活记录
 draft: false
-pinned: true
+pinned: false
 ---
 
 # 使用Mizuki创建个人博客
