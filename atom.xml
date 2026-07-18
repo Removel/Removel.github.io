@@ -5,7 +5,7 @@
   <link href="https://removel.github.io/" rel="alternate" type="text/html"/>
   <link href="https://removel.github.io/atom.xml" rel="self" type="application/atom+xml"/>
   <id>https://removel.github.io/</id>
-  <updated>2026-06-20T10:44:57.566Z</updated>
+  <updated>2026-07-18T17:00:11.306Z</updated>
   <language>zh_CN</language>
   <entry>
     <title>即使是从零开始</title>
@@ -115,6 +115,236 @@
     <category term="生活记录"></category>
   </entry>
   <entry>
+    <title>从路由器选型到远程追番（四）：服务部署</title>
+    <link href="https://removel.github.io/posts/26-07-18/2026-07-18_filebrowser-service-deployment/" rel="alternate" type="text/html"/>
+    <id>https://removel.github.io/posts/26-07-18/2026-07-18_filebrowser-service-deployment/</id>
+    <published>2026-07-18T00:00:00.000Z</published>
+    <updated>2026-07-18T00:00:00.000Z</updated>
+    <summary>使用 FileBrowser 部署文件管理服务，实现番剧资源的远程存储、管理与在线观看——远程追番系列终章</summary>
+    <content type="html"><![CDATA[<h1>从路由器选型到远程追番（四）：服务部署</h1>
+<h2>前情提要</h2>
+<p>在上一篇文章我们执行好了对内网穿透的优化，大大增高了内网穿透过程中的使用体验与数据传输稳定性。到了现在，我们目前已经走过了很长的一段路程，终于来到了最后的环节：部署服务。<br />
+那么，我们现在拥有什么？</p>
+<ul>
+<li>一个能够通过外部网络，在不使用公网IP的情况下可以从路由器访问的家庭内网</li>
+<li>能够通过虚拟IP高稳定访问的设备</li>
+<li>能够通过命令手动控制路由器下的设备开启</li>
+<li>通过虚拟局域网IP+端口访问到对应设备的相关服务并执行相关操作</li>
+</ul>
+<p>那么现在显而易见，我们还需要的，便是最后的部署服务。</p>
+<h2>服务概念与引入</h2>
+<p>此时其实已经从硬件-》软件开发。我们只需要开发对应的服务，然后通过设备暴露在对应的端口，我们便可以通过在虚拟局域网当中的IP+端口号对该服务进行访问。我们可以提供的服务非常多样。理论上，所有现在你能看到的服务：前端页面、后端接口、音视频提供、文件管理、游戏服务器等，都能够通过部署，让别的设备访问。以下是比较全面的服务类型列表：</p>
+<table>
+<thead>
+<tr>
+<th>服务类别</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>前端服务</strong></td>
+<td>前端页面部署，你看到的所有网页都是前端工程的体现</td>
+</tr>
+<tr>
+<td><strong>后端数据服务</strong></td>
+<td>涉及到后端与数据库信息等，存储用户业务数据，在正规的业务当中还会涉及到消息队列、缓存等相关内容</td>
+</tr>
+<tr>
+<td><strong>文件与附件服务</strong></td>
+<td>类似于nas、网盘服务。</td>
+</tr>
+<tr>
+<td><strong>域名解析服务</strong></td>
+<td>我们常说的DNS服务器便是提供这类服务，将请求域名通过查询转化成IP地址</td>
+</tr>
+<tr>
+<td><strong>邮件收发服务</strong></td>
+<td>我们常说的163、qq、gmail等邮件都是通过邮件服务器和相关协议（比如SMTP等）执行的</td>
+</tr>
+<tr>
+<td><strong>安全防护服务</strong></td>
+<td>相当于“门卫和保安”。设置访问规则，拦截恶意攻击，保护服务器里的数据不被黑。</td>
+</tr>
+<tr>
+<td><strong>时间校准服务</strong></td>
+<td>让所有服务器“对表”。确保你凌晨下单的时间、支付扣款的时间在所有系统里完全一致，不乱套。</td>
+</tr>
+<tr>
+<td><strong>监控与告警服务</strong></td>
+<td>实时反馈线上服务情况，有异常、崩溃等问题立刻上报相关人员</td>
+</tr>
+</tbody>
+</table>
+<p>除了以上服务外，还有很多，此处不一一列举。同时上面的服务有很多的内容都非常的正式，一般在企业当中才会用到。我们个人用户而言，并不需要如此多的服务。该系列以来的目标都是只有一个：远程追番，即实现番剧的本地化存储、番剧的远程访问（在线观看、下载、上传等操作）。</p>
+<h2>需求分析与方案选择</h2>
+<p>于是我们只需要完成以下功能即可：</p>
+<ol>
+<li>访问网页时能够提供一个结构清晰、美观的前端页面供我们和后端番剧相关的服务交互</li>
+<li>能够通过后端服务提供接口的调用，包括简单的登录认证、简单的crud操作、简单的文件上传、下载等内容</li>
+</ol>
+<p>这是一个功能需求比较少的小型全栈项目。理论上讲，我们可以自己手动开发：</p>
+<table>
+<thead>
+<tr>
+<th>项目类型</th>
+<th>技术栈</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>前端</td>
+<td>HTML、CSS、JavaScript、TypeScript、Vue、React等</td>
+</tr>
+<tr>
+<td>后端</td>
+<td>java、spring、mybatis、redis、go、GORM、kitex等</td>
+</tr>
+</tbody>
+</table>
+<p>鉴于现在ai的发展，我们可以快速的开发出我们想要的功能，但是使用ai+自己开发理解这些概念对于大部分人来说门槛还是比较高，没有必要。我们可以将目前的已经有的一些开源软件配置好来使用即可。此处我们使用知名度比较高的开源文件管理服务FileBrowser。<br />
+它有什么优点：</p>
+<ul>
+<li>免去繁杂的数据库配置：使用sqlite作为数据库使用，免去了用户手动安装配置数据库比如MySQL、Oracle、Postgresql等</li>
+<li>通过exe文件一键启动前后端服务：免去了用户手动编译、构建、启动的过程</li>
+<li>较为完善的功能：它高度完成了前端交互页面、后端文件管理服务的绝大部分功能</li>
+<li>高度可自定义化：可以通过自己或者第三方代码包安装个性化主题。</li>
+</ul>
+<h2>那么我们开始吧</h2>
+<h3>安装方式</h3>
+<p>git的url如下所示：</p>
+<pre><code>https://github.com/filebrowser/filebrowser
+</code></pre>
+<p>或者跳转到其官方网页：</p>
+<pre><code>https://filebrowser.org/index.html
+</code></pre>
+<p>依照其描述有多种安装方式：</p>
+<ul>
+<li>mac命令行:</li>
+</ul>
+<pre><code>brew tap filebrowser/tap
+brew install filebrowser
+filebrowser -r /path/to/your/files
+</code></pre>
+<ul>
+<li>windows命令行:</li>
+</ul>
+<pre><code>iwr -useb https://raw.githubusercontent.com/filebrowser/get/master/get.ps1 | iex
+filebrowser -r /path/to/your/files
+</code></pre>
+<ul>
+<li>docker容器部署：</li>
+</ul>
+<pre><code>docker run \
+    -v filebrowser_data:/srv \
+    -v filebrowser_database:/database \
+    -v filebrowser_config:/config \
+    -p 8080:80 \
+    filebrowser/filebrowser
+</code></pre>
+<p>这里可以参考网上的其他资料：</p>
+<blockquote>
+<p>https://zhuanlan.zhihu.com/p/1961438217296389474
+https://blog.csdn.net/gitblog_01154/article/details/151437827
+https://developer.aliyun.com/article/1744763</p>
+</blockquote>
+<p>注意这里由于涉及到docker的使用，虽然确实这样部署很简单，但是不是比较熟练的同学会难以理解相关命令，故不推荐使用该方案（除非你已经认为docker的使用轻而易举啊~），推荐手动下载安装使用。</p>
+<h3>手动安装与首次启动</h3>
+<ul>
+<li>手动下载安装：</li>
+</ul>
+<pre><code>https://github.com/filebrowser/filebrowser/releases/tag/v2.63.18
+</code></pre>
+<p>到其中选择自己的平台下载对应包，并解压到自己的指定的文件当中。示例如下：</p>
+<p><img src="https://removel.github.io/_astro/filebrowser_origin.CJF31aEw_1BltE8.webp" alt="filebrowser_origin" />
+在最开始时可能不会有style和user文件夹，我们只需要保证有下面的.db文件（数据库）和.exe文件（服务启动）即可。</p>
+<p>我们执行.exe文件会跳出命令行界面，如下所示：
+<img src="https://removel.github.io/_astro/filebrowser_cmd.BD6EvHV__1ys20l.webp" alt="filebrowser_cmd" />
+最后面两条是使用时的日志。可见图中的端口号为2333。由于不是最初的启动，所以初始密码等相关信息在这里没有呈现。按照正常流程，第一次执行启动操作时会给到初始密码。</p>
+<h3>访问 FileBrowser</h3>
+<p>这时候表明服务已经打开。我们可以通过多种方式访问。</p>
+<ul>
+<li>本地访问：在浏览器输入url：localhost或者127.0.0.1:2333(你的端口号)即可跳转页面</li>
+<li>其他设备访问：先获取到服务部署所在设备的IP，然后再在浏览器输入url+端口号：比如114.141.198.10:2333，即可访问（前提是你的IP正确并且内网穿透操作成功）</li>
+</ul>
+<p>输入url后可以看到类似初始的访问界面：
+<img src="https://removel.github.io/_astro/filebrowser_page.C1F9gaaN_15Q4Jh.webp" alt="filebrowser_page" />
+其中用户为admin，密码为在初始启动时命令行操作台中对应的字符串。在登陆进去后通过setting相关操作，尽快为自己创建账户。<br />
+<img src="https://removel.github.io/_astro/filebrowser_page2.CS6amAls_Z1XGODT.webp" alt="filebrowser_page2" />
+最开始的账户界面如上</p>
+<h3>文件存储结构</h3>
+<p>在windows系统当中，该filebrowser的文件存储结构如下：</p>
+<pre><code>FileBrowser/
+├── filebrowser.db
+├── filebrowser.exe
+├── FilebrowserDocs/
+└── Users/
+    ├── %Username1%/
+    │   ├── dir1/
+    │   ├── dir2/
+    │   └── ……
+    └── %Username2%/
+</code></pre>
+<h3>主题美化</h3>
+<p>当然，我们可以通过引入相关style包来对其个性化美化，比如下面：
+<img src="https://removel.github.io/_astro/filebrowser_style.WKURSSUg_ZT9mwG.webp" alt="filebrowser_style" />
+<img src="https://removel.github.io/_astro/filebrowser_style2.CmY6ZZyS_ZPosex.webp" alt="filebrowser_style2" />
+<em><strong>~nekopara！~（QwQ）喵！</strong></em></p>
+<p>我们需要引入相关包，将其放在style文件夹下，style文件夹和.exe、.db文件应当在同一目录下。style包当中有以下内容：</p>
+<ul>
+<li>img文件夹：用于浏览器使用到的各个部分的图标</li>
+<li>custom.css：核心修改页面框架的表现方式</li>
+<li>favicon.ico：网站的ico图标</li>
+<li>manifest.json：相关的使用到的设定配置文件</li>
+</ul>
+<p><em><strong>此处感谢B站的up：GTX690战术核显卡导弹 提供的美化包：</strong></em></p>
+<blockquote>
+<p>https://www.nekopara.uk/archives/416.html</p>
+</blockquote>
+<p>在放进项目文件夹重新打开界面之后（记得打开f12到网络界面选择禁止缓存）可以重新看到美化调整后的页面。</p>
+<h3>功能概览</h3>
+<p>个人设置相关的内容多而杂，但是每一个又比较简单，就不赘述。现在简单讲讲如何使用：
+<img src="https://removel.github.io/_astro/guide.G9AgD3za_Z2f6FWR.webp" alt="guide" /></p>
+<ol>
+<li>我的文件：当前文件夹信息，左边对应当前情况</li>
+<li>新建文件夹：在当前文件夹下创建新的文件夹</li>
+<li>新建文件：在当前文件夹下文件</li>
+<li>更改文件陈列方式：列表-小型方块排列-大型方块排列</li>
+<li>下载：选定文件之后能够下载到本地</li>
+<li>上传：点击后可以选择单个文件上传or文件夹上传，对于文件夹当中重复的内容/文件重复的内容可以自己选择跳过/替换等</li>
+<li>信息：点击文件后可以查看对应详细信息</li>
+<li>多选模式：点击后开启多选模式，可一次选择多个文件</li>
+<li>文件列表：所有的文件会在此陈列</li>
+<li>登出：等处当前账号回到登陆界面</li>
+</ol>
+<h2>常见坑点</h2>
+<h3>端口冲突</h3>
+<p>启动服务时可能遇到端口被其他程序占用的情况。前面参考链接中的文章有提到如何通过命令行自定义端口号，例如：</p>
+<pre><code>filebrowser -a 0.0.0.0 -p 你想要设定的端口号 -r /path/to/your/files
+</code></pre>
+<p>将 <code>-p</code> 后的端口号改成一个空闲的即可。</p>
+<h3>防火墙拦截</h3>
+<p>如果远程设备通过虚拟局域网 IP + 端口号无法访问 FileBrowser，大概率是 Windows 防火墙拦住了。到「Windows 安全中心 → 防火墙和网络保护 → 允许应用通过防火墙」中，将 <code>filebrowser.exe</code> 加入放行列表，或直接在「高级设置 → 入站规则」中新建一条放行规则，指定端口号。</p>
+<h3>首次密码丢失</h3>
+<p>启动时命令行会打印初始 admin 密码，如果你没有记录下来且已经滚动过去了——坦白说我没有太好的找回办法。所以强烈建议：</p>
+<ol>
+<li>首次登录后立刻在 Settings 中创建<strong>自己的账户</strong></li>
+<li>同时将密码记录到密码管理器或笔记里</li>
+</ol>
+<p>如果以上两步都没做、密码又丢了……只能把 <code>filebrowser.db</code> 删掉重新运行一次 <code>filebrowser.exe</code>，让它重新生成数据库和初始密码。代价是之前的所有用户、设置、文件索引都会清空，所以<strong>一定做好首次记录</strong>。</p>
+<h2>完结撒花</h2>
+<p>到此我们所有工作全部完成，现在只需要获取到番剧资源然后把它们放到自己创建的文件夹里，就能够在网上线上远程追番啦~
+<img src="https://removel.github.io/_astro/video.Dci2srDo_eAU3f.webp" alt="acg_video" /></p>
+<p>关于如何获取片源、如何裁剪、各个环节上的一些额外的操作，将会在番外篇当中补充讲到。<br />
+从路由器选型到远程追番系列到此结束~<br />
+完结撒花，感谢陪伴！</p>
+]]></content>
+    <author>
+      <name>Removel鱼梦</name>
+    </author>
+    <category term="代码技术"></category>
+  </entry>
+  <entry>
     <title>从路由器选型到远程追番（三）：内网穿透优化</title>
     <link href="https://removel.github.io/posts/26-06-13/2026-06-13_tailscale-intranet-optimization/" rel="alternate" type="text/html"/>
     <id>https://removel.github.io/posts/26-06-13/2026-06-13_tailscale-intranet-optimization/</id>
@@ -210,7 +440,26 @@
 <li>为了可视化操作，建议同时安装luci-app-upnp（记不太清了，反正是类似于这个格式的名字），之后你能够在service（服务）上看到upnp设定相关的内容</li>
 <li>其实此时一般而言就没有问题了，如果后续有更高的需要，可以在可视化界面手动设定相关功能即可。重启路由器，此时一般来说就能够运行该服务了，通过远程桌面等内容我们能够看到相关的效果，页面在openwrt上如下：</li>
 </ul>
-<p><img src="https://removel.github.io/_astro/image3.CD2rt9gS_RjYaR.webp" alt="UPnP服务页面" /></p>
+<p><img src="https://removel.github.io/_astro/image3.CD2rt9gS_RjYaR.webp" alt="UPnP服务页面" />
+<img src="https://removel.github.io/_astro/image6.CfSwY4Ll_7XQRV.webp" alt="UPnP相关设定" />
+<em><strong>（上图是openwrt手动安装了argos主题后的样子）</strong></em></p>
+<ul>
+<li>此处是关于相关接口的一些映射：
+<ol>
+<li>25565：我的世界服务器服务接口映射</li>
+<li>3389：windows远程桌面专用端口映射</li>
+<li>41641：tailscale软件服务端口映射
+注意：以上端口映射建议配置固定的设备ip（静态地址）；其次是最好固定访问ip防止外部网络扫接口攻击设备。</li>
+</ol>
+</li>
+</ul>
+<p>设定好并应用之后我们使用tailscale status命令可以发现：链接的IP地址变成了对应的信息，实测下来稳定性大大增强。</p>
+<pre><code>(base) PS D:\Projects\Removel.github.io&gt; tailscale status
+100.96.201.108   removel-desktop-1  Removel0202@  windows  -                                                            
+100.116.185.118  openwrt-1          Removel0202@  linux    active; direct 192.168.1.2:41641, tx 111224 rx 921296        
+100.80.55.9      removel-laptop-1   Removel0202@  windows  active; direct 124.77.173.83:41641, tx 595575380 rx 9461604  
+100.70.8.11      removel-server     Removel0202@  windows  -    
+</code></pre>
 <h2>优化三：远程唤醒（WOL+etherwake）</h2>
 <p>总体介绍：远程唤醒的方式在网上有很多，但是有没有最经济，最好玩的打法呢？有的，兄弟，有的。使用wol+etherwake的方法，我们能够通过ssh到路由器并输入相关指令远程启动计算机，从而避免使用类似于智能插座、X家开机卡、第三方厂商软件等可能需要马内的路径</p>
 <p>步骤：</p>
