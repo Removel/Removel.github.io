@@ -119,6 +119,24 @@ tailscale up --accept-routes
 - 其实此时一般而言就没有问题了，如果后续有更高的需要，可以在可视化界面手动设定相关功能即可。重启路由器，此时一般来说就能够运行该服务了，通过远程桌面等内容我们能够看到相关的效果，页面在openwrt上如下：
 
 ![UPnP服务页面](./images/image3.png)
+![UPnP相关设定](./images/image6.png)
+***（上图是openwrt手动安装了argos主题后的样子）***
+- 此处是关于相关接口的一些映射：
+  1. 25565：我的世界服务器服务接口映射
+  2. 3389：windows远程桌面专用端口映射
+  3. 41641：tailscale软件服务端口映射
+注意：以上端口映射建议配置固定的设备ip（静态地址）；其次是最好固定访问ip防止外部网络扫接口攻击设备。  
+  
+设定好并应用之后我们使用tailscale status命令可以发现：链接的IP地址变成了对应的信息，实测下来稳定性大大增强。
+```bash
+(base) PS D:\Projects\Removel.github.io> tailscale status
+100.96.201.108   removel-desktop-1  Removel0202@  windows  -                                                            
+100.116.185.118  openwrt-1          Removel0202@  linux    active; direct 192.168.1.2:41641, tx 111224 rx 921296        
+100.80.55.9      removel-laptop-1   Removel0202@  windows  active; direct 124.77.173.83:41641, tx 595575380 rx 9461604  
+100.70.8.11      removel-server     Removel0202@  windows  -    
+```
+
+
 
 ## 优化三：远程唤醒（WOL+etherwake）
 
