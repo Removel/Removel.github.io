@@ -1,0 +1,10 @@
+{
+	"title": "字节厂今天的饭",
+	"description": "今天字节吃什么了？",
+	"date": "2026-07-19",
+	"location": "中国上海",
+	"tags": ["字节跳动", "上海"],
+	"layout": "masonry",
+	"columns": 3,
+	"hidden": false
+}

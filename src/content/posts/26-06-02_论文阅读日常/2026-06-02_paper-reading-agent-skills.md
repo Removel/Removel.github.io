@@ -4,7 +4,7 @@ published: 2026-06-02
 description: '两篇论文阅读心得：《From Raw Experience to Skill Consumption》与《Executive Strategy for Self-Evolving Agent Skills》'
 tags: [论文阅读, Agent, Skill, 技能优化, SkillOpt, 模型生成技能, 负迁移]
 category: 代码技术
-image: ./images/cover.png
+image: ./images/cover.jpg
 draft: false
 pinned: false
 ---

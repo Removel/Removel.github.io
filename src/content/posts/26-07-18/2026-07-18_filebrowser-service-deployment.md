@@ -4,7 +4,7 @@ published: 2026-07-18
 description: '使用 FileBrowser 部署文件管理服务，实现番剧资源的远程存储、管理与在线观看——远程追番系列终章'
 tags: [FileBrowser, 服务部署, 文件管理, 远程追番, 内网穿透, 主题美化]
 category: 代码技术
-image: ./images/cover.png
+image: ./images/cover.jpg
 draft: false
 ---
 

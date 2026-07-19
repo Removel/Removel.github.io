@@ -4,7 +4,7 @@ published: 2026-06-02
 description: 'OneAndOnly项目中混合存储架构的记忆系统设计，结合Chroma向量数据库与Markdown文档的双层存储策略'
 tags: [Agent, 记忆系统, LangGraph, Chroma, 向量数据库, 多智能体, 架构设计]
 category: 代码技术
-image: ./cover.png
+image: ./cover.jpg
 draft: false
 pinned: false
 ---

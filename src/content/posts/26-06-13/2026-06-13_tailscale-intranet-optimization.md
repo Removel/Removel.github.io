@@ -4,7 +4,7 @@ published: 2026-06-13
 description: 'Tailscale内网穿透优化实战：子网宣告、UPnP、远程唤醒、SSH服务与无认证运行五项优化方案'
 tags: [Tailscale, 内网穿透, 路由器, 远程追番, 子网路由, UPnP, WOL, 远程唤醒, OpenWRT]
 category: 代码技术
-image: ./images/cover.png
+image: ./images/cover.jpg
 draft: false
 ---
 _"Pain is temporary, but gains are forever."——GigaChad(doge)_

@@ -4,7 +4,7 @@ published: 2026-06-02
 description: '深入分析腾讯混元Hy-Memory的六层记忆框架、双系统架构与演化链机制'
 tags: [Hy-Memory, 记忆系统, Agent, 智能体, 记忆架构, 演化链]
 category: 代码技术
-image: ./images/cover.png
+image: ./images/cover.jpg
 draft: false
 pinned: false
 ---

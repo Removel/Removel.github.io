@@ -2,7 +2,7 @@
 title: '从路由器选型到远程追番（一）：路由器选取与系统刷取'
 published: 2026-05-11
 description: '以小米 AX3000T 为例，记录从路由器选型到刷入 OpenWrt 的完整过程：为什么要折腾、怎么避免变砖、TTL 串口 + U-Boot + TFTP 的关键步骤与坑点。'
-image: ./cover.png
+image: ./cover.jpg
 tags: [OpenWrt, 路由器, Tailscale, 内网穿透]
 category: 代码技术
 draft: false
