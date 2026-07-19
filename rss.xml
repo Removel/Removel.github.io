@@ -1138,7 +1138,7 @@ database/agent/
 &lt;/code&gt;&lt;/pre&gt;
 &lt;h2&gt;总结&lt;/h2&gt;
 &lt;p&gt;该项目的长久记忆实现通过&lt;strong&gt;混合存储架构&lt;/strong&gt;和&lt;strong&gt;智能记忆管理Agent&lt;/strong&gt;，构建了一个完整的记忆系统。向量数据库提供强大的语义检索能力，Markdown文档提供结构化的静态档案存储，配合Agent的主动识别和分类存储机制，实现了对用户信息的全面管理和智能召回。&lt;/p&gt;
-</content:encoded></item><item><title>从路由器选取到远程追番（二）：OpenWRT系统设置与Tailscale安装</title><link>https://removel.github.io/posts/26-06-01/2026-06-01_openwrt-tailscale-setup/</link><guid isPermaLink="true">https://removel.github.io/posts/26-06-01/2026-06-01_openwrt-tailscale-setup/</guid><description>OpenWRT系统设置与Tailscale虚拟局域网安装配置教程，实现远程追番的第二步</description><pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;1：系统设置&lt;/h2&gt;
+</content:encoded></item><item><title>从路由器选型到远程追番（二）：OpenWRT系统设置与Tailscale安装</title><link>https://removel.github.io/posts/26-06-01/2026-06-01_openwrt-tailscale-setup/</link><guid isPermaLink="true">https://removel.github.io/posts/26-06-01/2026-06-01_openwrt-tailscale-setup/</guid><description>OpenWRT系统设置与Tailscale虚拟局域网安装配置教程，实现远程追番的第二步</description><pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate><content:encoded>&lt;h2&gt;1：系统设置&lt;/h2&gt;
 &lt;p&gt;（前提：请将你的路由器的WAN口接入到你家的光猫/已经接入网的路由器的LAN口相连，保证外部网络通畅以执行下面的所有操作）&lt;/p&gt;
 &lt;h3&gt;1.1：安装中文&lt;/h3&gt;
 &lt;p&gt;在最开始的时候OpenWRT进入系统会是英文，因此我们需要安装中文语言包，在顶部banner的 系统 → 软件包（英文则应该是 System → Software）当中进入如下页面：&lt;/p&gt;

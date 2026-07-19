@@ -5,7 +5,7 @@
   <link href="https://removel.github.io/" rel="alternate" type="text/html"/>
   <link href="https://removel.github.io/atom.xml" rel="self" type="application/atom+xml"/>
   <id>https://removel.github.io/</id>
-  <updated>2026-07-18T17:00:11.306Z</updated>
+  <updated>2026-07-19T06:45:07.713Z</updated>
   <language>zh_CN</language>
   <entry>
     <title>即使是从零开始</title>
@@ -1226,7 +1226,7 @@ database/agent/
     <category term="代码技术"></category>
   </entry>
   <entry>
-    <title>从路由器选取到远程追番（二）：OpenWRT系统设置与Tailscale安装</title>
+    <title>从路由器选型到远程追番（二）：OpenWRT系统设置与Tailscale安装</title>
     <link href="https://removel.github.io/posts/26-06-01/2026-06-01_openwrt-tailscale-setup/" rel="alternate" type="text/html"/>
     <id>https://removel.github.io/posts/26-06-01/2026-06-01_openwrt-tailscale-setup/</id>
     <published>2026-06-01T00:00:00.000Z</published>
