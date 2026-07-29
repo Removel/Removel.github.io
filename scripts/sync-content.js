@@ -96,6 +96,7 @@ console.log("\n正在建立内容链接...");
 const contentMappings = [
 	{ src: "posts", dest: "src/content/posts" },
 	{ src: "spec", dest: "src/content/spec" },
+	{ src: "diary", dest: "src/content/diary" },
 	{ src: "data", dest: "src/data" },
 	{ src: "images", dest: "public/images" },
 ];

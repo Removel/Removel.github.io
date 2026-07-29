@@ -15,6 +15,9 @@ Mizuki-Content/
 ├── spec/               # 特殊页面
 │   ├── about.md
 │   └── friends.md
+├── diary/              # 日记内容（每条一个 JSON）
+│   ├── 2025-08-20-sakura.json
+│   └── 2026-04-25-computer-maintenance.json
 ├── data/               # 数据文件
 │   ├── anime.ts
 │   ├── projects.ts
@@ -38,7 +41,7 @@ cd Mizuki-Content
 git init
 
 # 创建基本目录结构
-mkdir -p posts spec data images/albums images/diary images/posts
+mkdir -p posts spec diary data images/albums images/diary images/posts
 
 # 创建 README
 echo "# Mizuki 博客内容" > README.md
@@ -55,6 +58,7 @@ cd /path/to/Mizuki
 # 复制内容到新仓库
 cp -r src/content/posts/* /path/to/Mizuki-Content/posts/
 cp -r src/content/spec/* /path/to/Mizuki-Content/spec/
+cp -r src/content/diary/* /path/to/Mizuki-Content/diary/
 cp -r src/data/* /path/to/Mizuki-Content/data/
 cp -r public/images/* /path/to/Mizuki-Content/images/
 ```
@@ -148,6 +152,24 @@ posts/
     ├── cover.jpg                     # 封面图
     └── diagram.png                   # 文章中的图片
 ```
+
+## 📔 日记内容
+
+每条日记使用独立 JSON 文件，存放在 `diary/`：
+
+```json
+{
+  "content": "今天又参加了电脑维护活动呀~",
+  "published": "2026-04-25T23:00:00+08:00",
+  "images": ["/images/diary/computer-maintenance-activity.jpg"],
+  "location": "学校",
+  "mood": "充实",
+  "tags": ["社团活动", "电脑维护"],
+  "draft": false
+}
+```
+
+日记图片统一存放在 `images/diary/`，JSON 中使用 `/images/diary/...` 路径引用。
 
 ## 🔄 更新工作流
 
