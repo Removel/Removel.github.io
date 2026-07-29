@@ -11,7 +11,7 @@
 - 横幅和全屏壁纸组件始终同时渲染，隐藏其中一套只改变视觉状态，不代表未启用的资源没有被浏览器加载。
 - 本地相册瀑布流直接使用高清原图作为 `<img src>`。Fancybox 也引用同一原图，导致页面预览阶段就下载全部高清照片。
 - 相册图片没有预先提供宽高，浏览器在图片下载前无法稳定计算瀑布流高度，也会削弱原生懒加载的判断效果。
-- 通用图片组件使用过宽的 `import.meta.glob`。当前 `gh-pages` 产物中，同一相册原图同时出现在 `/images/albums/` 和 `/_astro/`，需要在实施阶段缩小 glob 范围并验证产物去重。
+- 通用图片组件使用过宽的 `import.meta.glob`。当前 `gh-pages` 产物中，同一相册原图同时出现在 `/images/albums/` 和 `/_astro/`，需要在实施阶段缩小 glob 范围，避免部署产物额外复制相册原图。这里不改动桌面、移动壁纸源目录的保留方式。
 
 线上基线数据：
 
@@ -24,40 +24,50 @@
 ## 目标
 
 - 所有高清原图继续保存在现有路径，不改变原图内容。
-- 对桌面和移动目录中内容完全相同的重复文件，仅在校验哈希一致后保留一份规范源图；不会删除任何唯一图片内容。
+- `public/assets/desktop-banner` 和 `public/assets/mobile-banner` 两个目录全部保留，即使对应文件内容相同也不合并、不删除。
 - 用户点击照片后，Fancybox 加载并展示对应高清原图。
-- 页面列表、相册瀑布流、壁纸和横幅使用适配屏幕的 WebP 预览图。
+- 相册瀑布流、壁纸和横幅使用固定规格的 WebP 预览图。
 - 壁纸轮播任意时刻最多维护当前图和下一张图，不一次创建全部轮播图片。
 - 当前壁纸模式只加载对应组件；用户切换模式后再初始化另一套资源。
 - 图片生成流程可重复执行，只重新处理新增或变化的源图。
 - 单张图片处理失败不阻塞全部构建，并自动回退到原图。
+- 在现有文件内完成局部修改，不为图片优化新增 service、store、全局注册表或统一图片配置层。
 
 ## 非目标
 
 - 不删除或覆盖高清原图。
-- 不删除任何唯一图片；允许清理经过哈希校验的字节级重复副本。
+- 不合并桌面和移动壁纸目录，不删除其中的重复文件。
 - 不引入付费图片 CDN、对象存储或新的后端服务。
 - 不改变相册现有目录和 `info.json` 的基本使用方式。
 - 不在本次工作中重构博客的导航、音乐播放器、文章目录或整体视觉设计。
 - 不修改第三方外链图片本身；外链相册优先使用已经配置的 `thumbnail`。
+- 不为复用少量代码而新增图片管理器、轮播基类、全局状态层或复杂数据模型。
 
 ## 总体方案
 
-采用“源图 + 生成预览图 + 运行时按需加载”的三层结构：
+采用“源图保留 + 生成预览图 + 页面按需加载”的直接流程：
 
 ```text
 高清源图
   ├─ 壁纸：public/assets/desktop-banner、public/assets/mobile-banner
   └─ 相册：public/images/albums
           ↓ sharp 构建脚本
-可重建的 WebP 预览图和 manifest
+可重建的 WebP 预览图
           ↓ 页面首次展示
 当前壁纸 / 相册预览图
           ↓ 用户点击照片
 原始高清图片
 ```
 
-源图是唯一真实数据。预览图和 manifest 都是构建产物，可以随时删除并重新生成。
+源图是唯一真实数据，两个壁纸源目录都按现状保留。预览图是构建产物，可以随时删除并重新生成。
+
+为保持逻辑简单：
+
+- 只新增一个预览图生成脚本。
+- 预览图路径由源图路径直接推导，不引入 manifest。
+- 相册继续由现有 `album-scanner` 扫描。
+- 壁纸模式继续由现有 `GridScripts` 处理，不新增全局模式控制器。
+- 横幅和全屏壁纸各自在现有组件中管理自己的两个图片槽位。
 
 ## 预览图生成
 
@@ -67,28 +77,34 @@
 
 ```text
 public/generated/image-previews/
-  manifest.json
   wallpapers/
+    desktop-banner/
+    mobile-banner/
   albums/
 ```
 
-目录结构保留源图片的相对路径，并在文件名中增加宽度：
+目录结构保留源图片的相对路径，并在文件名中增加 `preview`：
 
 ```text
-public/generated/image-previews/albums/bw2026/DSC03207-480.webp
-public/generated/image-previews/albums/bw2026/DSC03207-960.webp
-public/generated/image-previews/albums/bw2026/DSC03207-1920.webp
+public/generated/image-previews/albums/bw2026/DSC03207-preview.webp
+```
+
+桌面和移动壁纸预览图分别输出，不因为源文件相同而合并：
+
+```text
+public/generated/image-previews/wallpapers/desktop-banner/1-preview.webp
+public/generated/image-previews/wallpapers/mobile-banner/1-preview.webp
 ```
 
 ### 规格
 
-统一生成以下 WebP 版本：
+每张源图只生成一个 WebP 预览版本：
 
-| 用途 | 宽度 | 质量 |
+| 来源 | 最大宽度 | 质量 |
 | --- | ---: | ---: |
-| 手机缩略图 | 480 px | 78 |
-| 常规预览 | 960 px | 82 |
-| 桌面壁纸/大预览 | 1920 px | 84 |
+| 本地相册照片 | 1280 px | 82 |
+| 桌面壁纸目录 | 2560 px | 84 |
+| 移动壁纸目录 | 1280 px | 82 |
 
 处理规则：
 
@@ -96,59 +112,31 @@ public/generated/image-previews/albums/bw2026/DSC03207-1920.webp
 - 自动根据 EXIF 方向旋转。
 - 移除不影响显示的元数据，源文件不变。
 - 支持当前扫描器已经接受的常见位图格式；SVG 和 GIF 不转换，直接回退源文件。
-- manifest 记录原图路径、原始宽高、预览路径、源文件大小和修改时间。
-
-manifest 示例：
-
-```json
-{
-  "/images/albums/bw2026/DSC03207.jpg": {
-    "width": 4000,
-    "height": 6000,
-    "previews": {
-      "480": "/generated/image-previews/albums/bw2026/DSC03207-480.webp",
-      "960": "/generated/image-previews/albums/bw2026/DSC03207-960.webp",
-      "1920": "/generated/image-previews/albums/bw2026/DSC03207-1920.webp"
-    }
-  }
-}
-```
+- 预览路径只使用确定性命名规则，不生成额外索引文件。
 
 ### 增量策略
 
-脚本通过源文件相对路径、文件大小和 `mtime` 判断是否需要重新生成。满足以下任一条件时重建：
+脚本直接比较源图和目标预览图的修改时间。满足以下任一条件时重建：
 
 - 源图是新增文件。
-- 源图大小或修改时间变化。
+- 源图修改时间晚于预览图。
 - 所需预览尺寸缺失。
-- 生成配置版本变化。
 
-源图被删除后，脚本清理对应的预览图和 manifest 记录。生成目录提交到 Git，使 GitHub Pages 不需要在部署时重复处理全部照片；同时脚本保持幂等，作者也可以在本地通过一条命令刷新预览图。
+脚本不维护缓存数据库或 manifest。源图被删除后，如需清理旧预览，可删除对应生成文件或整个生成目录后重新运行脚本；日常运行只负责新增和更新，避免引入额外同步状态。生成目录提交到 Git，使 GitHub Pages 不需要在部署时重复处理全部照片。
 
 ## 相册数据流
 
 ### 本地相册
 
-`album-scanner` 扫描原图时读取 manifest，并为每张照片返回：
-
-```ts
-interface Photo {
-  src: string;
-  thumbnail?: string;
-  srcset?: string;
-  width?: number;
-  height?: number;
-}
-```
+`album-scanner` 继续扫描原图目录，并按固定命名规则检查映射出的预览文件。继续使用现有 `Photo` 类型，不新增数据结构。
 
 字段含义：
 
 - `src`：高清原图，供 Fancybox 和直接打开原图使用。
-- `thumbnail`：默认预览图，优先使用 960 px 版本。
-- `srcset`：480、960、1920 px 预览图集合。
-- `width`、`height`：原图固有尺寸，用于提前保留布局空间。
+- `thumbnail`：1280 px WebP 预览图。
+- `width`、`height`：`album-scanner` 直接调用现有 Sharp 的 `metadata()` 读取原图尺寸，用于提前保留布局空间；不新增尺寸索引文件。
 
-若 manifest 缺失或单图生成失败：
+若对应预览文件不存在或单图生成失败：
 
 - `thumbnail` 回退为 `src`。
 - 页面仍能正常显示和打开原图。
@@ -169,9 +157,7 @@ interface Photo {
 ```html
 <div data-fancybox data-src="高清原图">
   <img
-    src="960px 预览图"
-    srcset="480px ..., 960px ..., 1920px ..."
-    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+    src="1280px 预览图"
     width="原始宽度"
     height="原始高度"
     loading="lazy"
@@ -184,9 +170,13 @@ interface Photo {
 
 ## 壁纸与横幅数据流
 
-### 单一图片清单
+### 保留现有桌面与移动配置
 
-壁纸源文件不需要同时复制到桌面和移动目录。配置最终使用同一组逻辑图片，设备差异由生成的 `srcset` 和 `sizes` 解决。为了保持兼容，实施时允许旧的 `desktop/mobile` 配置继续工作；对于内容完全相同的两个文件，先校验哈希，再保留一份规范源图并让两种设备配置引用该路径。
+保持 `src/config.ts` 中现有 `desktop` 和 `mobile` 两组配置，也保留两个源目录中的全部文件。组件根据当前设备只读取其中一组：
+
+- 桌面设备使用 `desktop` 配置及其预览图。
+- 移动设备使用 `mobile` 配置及其预览图。
+- 不比较哈希、不合并路径、不建立统一图片清单。
 
 ### 轮播状态
 
@@ -207,17 +197,17 @@ DOM 中不会存在完整的 13 或 26 张 `<img>`。
 
 ### 模式隔离
 
-`banner`、`fullscreen`、`none` 三种模式共享一个模式控制器：
+继续使用现有 `GridScripts` 处理 `banner`、`fullscreen`、`none` 三种模式，不新增模式控制器：
 
 - 初始模式来自 `localStorage`，没有存储值时使用 `siteConfig.wallpaperMode.defaultMode`。
-- `banner` 模式只初始化横幅图片。
-- `fullscreen` 模式只初始化全屏壁纸。
-- `none` 模式不初始化任何壁纸图片。
-- 用户切换到尚未初始化的模式时，再创建对应的两个轮播槽位。
-- 模式离开时停止该模式的计时器、移除图片节点并释放解码资源；再次进入时重新初始化。
-- Swup 页面切换时复用全局状态并清理旧监听器，避免重复计时器和重复图片请求。
+- 现有 `setting-utils` 继续派发 `wallpaper-mode-change` 事件；`GridScripts` 继续处理页面布局，横幅和全屏壁纸组件监听同一事件并直接创建或清理自己的图片节点。
+- `banner` 模式初始化横幅的两个槽位，并清理全屏壁纸槽位。
+- `fullscreen` 模式初始化全屏壁纸的两个槽位，并清理横幅槽位。
+- `none` 模式清理两套槽位。
+- 模式离开时停止计时器、移除图片节点；再次进入时重新初始化。
+- Swup 页面切换后，组件根据当前 DOM 和 `localStorage` 重新初始化；初始化前先清理旧计时器和旧监听器，避免重复请求。
 
-这样可以避免当前“配置默认是 `fullscreen`，组件内部却默认按 `banner` 判断”的不一致。
+只在现有模式事件上补充局部监听，不新增 service、store、共享状态对象或新的事件总线。这样也能修复当前“配置默认是 `fullscreen`，组件内部却默认按 `banner` 判断”的不一致。
 
 ## 构建与开发流程
 
@@ -225,16 +215,14 @@ DOM 中不会存在完整的 13 或 26 张 `<img>`。
 
 ```json
 {
-  "images:generate": "node scripts/generate-image-previews.mjs",
-  "images:check": "node scripts/generate-image-previews.mjs --check"
+  "images:generate": "node scripts/generate-image-previews.mjs"
 }
 ```
 
 流程约束：
 
 - `predev` 和 `prebuild` 在内容同步后运行增量图片生成。
-- `--check` 只验证 manifest 与预览图是否同步，不写文件，用于 CI 或发布前检查。
-- 构建脚本打印新增、更新、跳过、删除和失败数量。
+- 构建脚本打印新增、更新、跳过和失败数量。
 - 首次全量生成耗时可以较长，后续内容更新只处理变化图片。
 
 生成目录提交到 Git 的原因：
@@ -254,12 +242,11 @@ DOM 中不会存在完整的 13 或 26 张 `<img>`。
 - RSS、Atom 和分享海报使用同样的明确范围。
 - `public/images/albums` 始终作为原样静态文件引用，不进入 Astro 资产管线。
 
-验收时检查同一相册原图不能同时出现在 `/images/albums/` 和 `/_astro/`。本次只避免新产物重复，不重写 Git 历史。
+验收时检查同一相册原图不能同时出现在 `/images/albums/` 和 `/_astro/`。这是部署产物去重，不会合并或删除 `public/assets/desktop-banner`、`public/assets/mobile-banner` 中的任何源文件。本次也不重写 Git 历史。
 
 ## 错误处理
 
 - 单图转换失败：记录源路径和 Sharp 错误，保留旧预览；没有旧预览则回退原图。
-- manifest 无法解析：构建失败，防止生成错误映射覆盖现有文件。
 - 预览图线上 404：图片元素通过 `error` 事件回退高清 `src`。
 - 高清原图加载失败：Fancybox 显示失败状态并提供“直接打开原图”和“重试”入口。
 - 用户启用节省流量模式时，不预加载轮播下一张；轮播切换时再加载。
@@ -269,10 +256,9 @@ DOM 中不会存在完整的 13 或 26 张 `<img>`。
 
 ### 自动验证
 
-- 对临时图片运行生成脚本，验证 480、960、1920 输出、宽高和 manifest。
+- 对临时图片运行生成脚本，验证相册、桌面壁纸、移动壁纸三类固定规格输出和宽高。
 - 第二次运行不修改任何输出，验证增量幂等。
 - 修改一张源图后只重建对应预览。
-- 删除一张源图后清理对应输出。
 - `pnpm check` 通过。
 - `pnpm build` 通过。
 - 构建后搜索重复的大型相册原图，确认不再进入 `/_astro`。
@@ -305,7 +291,6 @@ DOM 中不会存在完整的 13 或 26 张 `<img>`。
 
 - `scripts/generate-image-previews.mjs`
 - `package.json`
-- `src/types/album.ts`
 - `src/utils/album-scanner.ts`
 - `src/components/features/albums/PhotoCard.astro`
 - `src/components/misc/FullscreenWallpaper.astro`
@@ -317,7 +302,7 @@ DOM 中不会存在完整的 13 或 26 张 `<img>`。
 
 ## 实施顺序
 
-1. 建立预览图脚本、manifest 和增量检查。
+1. 建立预览图脚本和基于文件修改时间的增量生成。
 2. 接入相册预览图，验证点击后仍加载原图。
 3. 重写壁纸/横幅为双槽位轮播，并隔离模式加载。
 4. 收窄图片 glob，验证构建产物不重复复制相册原图。
