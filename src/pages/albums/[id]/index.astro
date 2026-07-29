@@ -169,8 +169,11 @@ if (!album) {
 						{album.photos.map((photo: Photo) => (
 							<PhotoCard
 								src={photo.src}
+								thumbnail={photo.thumbnail}
 								alt={photo.alt || photo.title || ""}
 								albumId={album.id}
+								width={photo.width}
+								height={photo.height}
 							/>
 						))}
 					</div>

@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
+import sharp from "sharp";
 
 import type { AlbumGroup, Photo } from "../types/album";
 
@@ -82,7 +83,16 @@ async function processAlbumFolder(
 		cover = hasWebpCover
 			? `/images/albums/${folderName}/cover.webp`
 			: `/images/albums/${folderName}/cover.jpg`;
-		photos = scanPhotos(folderPath, folderName);
+		const coverPreviewPath = path.join(
+			process.cwd(),
+			"public/generated/image-previews/albums",
+			folderName,
+			"cover-preview.webp",
+		);
+		if (fs.existsSync(coverPreviewPath)) {
+			cover = `/generated/image-previews/albums/${folderName}/cover-preview.webp`;
+		}
+		photos = await scanPhotos(folderPath, folderName);
 	}
 
 	// 检查是否隐藏相册
@@ -104,7 +114,10 @@ async function processAlbumFolder(
 	};
 }
 
-function scanPhotos(folderPath: string, albumId: string): Photo[] {
+async function scanPhotos(
+	folderPath: string,
+	albumId: string,
+): Promise<Photo[]> {
 	const photos: Photo[] = [];
 	const files = fs.readdirSync(folderPath);
 
@@ -141,25 +154,45 @@ function scanPhotos(folderPath: string, albumId: string): Photo[] {
 		}
 	}
 
-	imageFiles.forEach((file, index) => {
+	for (const [index, file] of imageFiles.entries()) {
 		const filePath = path.join(folderPath, file);
 		const stats = fs.statSync(filePath);
 
 		const { baseName, tags } = parseFileName(file);
+		const previewPath = path.join(
+			process.cwd(),
+			"public/generated/image-previews/albums",
+			albumId,
+			`${path.basename(file, path.extname(file))}-preview.webp`,
+		);
 
 		const src = fileWebpMap.has(file)
 			? `/images/albums/${albumId}/${fileWebpMap.get(file)}`
 			: `/images/albums/${albumId}/${file}`;
+		const previewSrc = `/generated/image-previews/albums/${albumId}/${path.basename(file, path.extname(file))}-preview.webp`;
+		let width: number | undefined;
+		let height: number | undefined;
+
+		try {
+			const metadata = await sharp(filePath).metadata();
+			width = metadata.autoOrient?.width ?? metadata.width;
+			height = metadata.autoOrient?.height ?? metadata.height;
+		} catch (error) {
+			console.warn(`无法读取相册图片尺寸: ${filePath}`, error);
+		}
 
 		photos.push({
 			id: `${albumId}-photo-${index}`,
 			src,
+			thumbnail: fs.existsSync(previewPath) ? previewSrc : src,
 			alt: baseName,
 			title: baseName,
 			tags: tags,
 			date: stats.mtime.toISOString().split("T")[0],
+			width,
+			height,
 		});
-	});
+	}
 
 	return photos;
 }

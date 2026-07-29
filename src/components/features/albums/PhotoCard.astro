@@ -1,7 +1,14 @@
 ---
 import type { PhotoCardProps } from "./types";
 
-const { src, alt = "", albumId } = Astro.props as PhotoCardProps;
+const {
+	src,
+	thumbnail = src,
+	alt = "",
+	albumId,
+	width,
+	height,
+} = Astro.props as PhotoCardProps;
 ---
 
 <div class="gallery-photo-card break-inside-avoid mb-3">
@@ -9,14 +16,57 @@ const { src, alt = "", albumId } = Astro.props as PhotoCardProps;
 		data-fancybox={`gallery-${albumId}`}
 		data-src={src}
 		data-type="image"
-		class="block rounded-xl overflow-hidden group cursor-pointer"
+		class="block rounded-xl overflow-hidden group cursor-pointer bg-black/5 dark:bg-white/5"
 	>
 		<img
-			src={src}
+			src={thumbnail}
 			alt={alt}
+			width={width}
+			height={height}
 			loading="lazy"
 			decoding="async"
+			data-original-src={src}
 			class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
 		/>
 	</div>
 </div>
+
+<script>
+	function initAlbumPreviewFallback() {
+		document
+			.querySelectorAll(".gallery-photo-card img[data-original-src]")
+			.forEach((image) => {
+				if (!(image instanceof HTMLImageElement)) {
+					return;
+				}
+
+				if (image.dataset.previewFallbackBound === "true") {
+					return;
+				}
+
+				image.dataset.previewFallbackBound = "true";
+				image.addEventListener(
+					"error",
+					() => {
+						const originalSrc = image.dataset.originalSrc;
+						if (originalSrc && image.src !== originalSrc) {
+							image.src = originalSrc;
+						}
+					},
+					{ once: true },
+				);
+			});
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener(
+			"DOMContentLoaded",
+			initAlbumPreviewFallback,
+			{ once: true },
+		);
+	} else {
+		initAlbumPreviewFallback();
+	}
+
+	document.addEventListener("swup:page:view", initAlbumPreviewFallback);
+</script>

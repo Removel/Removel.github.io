@@ -18,15 +18,15 @@ export async function processPosterImage(
 	if (isLocal && filePath) {
 		const basePath = filePath.replace(/\/[^/]+$/, "").replace(/\\/g, "/");
 		const files = import.meta.glob<ImageMetadata>(
-			"../../**/*.{jpg,jpeg,png,gif,webp,avif,svg}",
+			"/src/content/posts/**/*.{AVIF,GIF,JPEG,JPG,PNG,SVG,WEBP,avif,gif,jpeg,jpg,png,svg,webp}",
 			{
 				import: "default",
 			},
 		);
 		const normalizedPath = path
-			.normalize(path.join("../../", basePath, imagePath))
+			.normalize(path.join("/src", basePath, imagePath))
 			.replace(/\\/g, "/");
-		const file = files[`./${normalizedPath}`] || files[normalizedPath];
+		const file = files[normalizedPath];
 		if (file) {
 			const img = await file();
 			return img.src;

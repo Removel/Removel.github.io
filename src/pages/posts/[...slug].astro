@@ -115,11 +115,14 @@ if (entry.data.image) {
 	);
 	if (isLocal) {
 		const basePath = getFileDirFromPath(entry.filePath || "");
-		const files = import.meta.glob<ImageMetadata>("../../**", {
-			import: "default",
-		});
+		const files = import.meta.glob<ImageMetadata>(
+			"/src/content/posts/**/*.{AVIF,GIF,JPEG,JPG,PNG,SVG,WEBP,avif,gif,jpeg,jpg,png,svg,webp}",
+			{
+				import: "default",
+			},
+		);
 		const normalizedPath = path
-			.normalize(path.join("../../", basePath, entry.data.image))
+			.normalize(path.join("/src", basePath, entry.data.image))
 			.replace(/\\/g, "/");
 		const file = files[normalizedPath];
 		if (file) {
@@ -150,11 +153,14 @@ if (profileConfig.avatar) {
 		profileConfig.avatar.startsWith("data:")
 	);
 	if (isLocal) {
-		const files = import.meta.glob<ImageMetadata>("../../**", {
-			import: "default",
-		});
+		const files = import.meta.glob<ImageMetadata>(
+			"/src/assets/images/**/*.{AVIF,GIF,JPEG,JPG,PNG,SVG,WEBP,avif,gif,jpeg,jpg,png,svg,webp}",
+			{
+				import: "default",
+			},
+		);
 		const normalizedPath = path
-			.normalize(path.join("../../", profileConfig.avatar))
+			.normalize(path.join("/src", profileConfig.avatar))
 			.replace(/\\/g, "/");
 		const file = files[normalizedPath];
 		if (file) {
