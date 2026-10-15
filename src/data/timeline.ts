@@ -197,6 +197,7 @@ export const timelineData: TimelineItem[] = [
 		description: "从零开始学习计算机到拿到字节跳动实习offer，完成从大一结束到大二结束的一年学习与成长历程",
 		type: "work",
 		startDate: "2026-06-01",
+		endDate: "2026-10-09",
 		location: "上海",
 		organization: "字节跳动",
 		position: "后端开发实习生",
