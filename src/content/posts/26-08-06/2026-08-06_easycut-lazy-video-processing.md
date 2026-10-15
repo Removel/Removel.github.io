@@ -2,7 +2,7 @@
 title: '从路由器选型到远程追番（番外）：一种懒人收集视频资源的方法'
 published: 2026-08-06
 description: '介绍一种懒人版视频资源收集整理方法：B站+bili23Downloader获取番剧资源，通过AI Agent Skill easyCut自动剪辑去冗余，实现从下载到整理的全程自动化。'
-tags: [ffmpeg, 视频剪辑, AI Agent, easyCut, B站, bili23Downloader, 自动化, 番剧资源]
+tags: ['网络折腾']
 category: 代码技术
 image: ./images/cover.png
 draft: false

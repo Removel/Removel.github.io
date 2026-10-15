@@ -2,7 +2,7 @@
 title: 使用Mizuki创建个人博客
 published: 2026-04-22
 description: 终于创建了自己的个人博客，使用GitHub上开源的Mizuki项目，从此开始记录我的学习与成长历程！
-tags: [博客, Mizuki, GitHub, 个人记录]
+tags: ['博客建站']
 category: 生活记录
 draft: false
 pinned: false

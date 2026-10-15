@@ -2,7 +2,7 @@
 title: 'Dynamic Workflows：智能体新行动模式与执行任务流程方法的发展'
 published: 2026-08-08
 description: '深入探讨Dynamic Workflows：融合动态规划与代码级强约束的新一代Agent行动范式，对比子Agent委派与DAG编排的优劣，介绍核心原理与实现方式。'
-tags: [Dynamic Workflows, Agent, Claude Code, LangGraph, 任务编排, workflow]
+tags: ['Agent']
 category: 代码技术
 image: ./images/cover.png
 draft: false

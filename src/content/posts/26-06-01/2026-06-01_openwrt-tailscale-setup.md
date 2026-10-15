@@ -2,7 +2,7 @@
 title: '从路由器选型到远程追番（二）：OpenWRT系统设置与Tailscale安装'
 published: 2026-06-01
 description: 'OpenWRT系统设置与Tailscale虚拟局域网安装配置教程，实现远程追番的第二步'
-tags: [OpenWRT, Tailscale, 路由器, 远程追番, 内网穿透, 虚拟局域网, SSH]
+tags: ['网络折腾']
 category: 代码技术
 image: ./images/cover.jpg
 draft: false

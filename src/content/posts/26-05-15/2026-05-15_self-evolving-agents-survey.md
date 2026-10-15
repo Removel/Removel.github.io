@@ -2,7 +2,7 @@
 title: '自进化Agent综述：从模型中心到环境驱动的共进化'
 published: 2026-05-15
 description: '开会材料：自进化Agent系统性综述、EvoSkill与EvolveR框架、Hermes自进化机制'
-tags: [论文阅读, 自进化Agent, EvoSkill, EvolveR, Hermes, 智能体, 强化学习]
+tags: ['Agent', '论文阅读']
 category: 代码技术
 image: ./images/image1.png
 draft: false

@@ -3,7 +3,7 @@ title: '个人理解下的OpenHuman记忆树原理与具体流程'
 published: 2026-05-20
 description: 'OpenHuman记忆系统'
 image: ./cover.jpg
-tags: ['OpenHuman', '记忆系统', 'Memory Tree', 'Obsidian', 'SQLite']
+tags: ['记忆系统']
 category: 代码技术
 draft: false
 pinned: false

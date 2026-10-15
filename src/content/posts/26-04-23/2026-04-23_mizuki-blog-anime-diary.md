@@ -3,7 +3,7 @@ title: '追番日记：悠哉日常大王'
 published: 2026-04-23
 description: '通过观看《悠哉日常大王》，反思现代生活中的焦虑与"知道"对我们的影响'
 image: ./miaopasi.png
-tags: ['番剧杂谈', '动漫', '悠哉日常大王']
+tags: ['番剧杂谈']
 category: 番剧杂谈
 draft: false
 ---
